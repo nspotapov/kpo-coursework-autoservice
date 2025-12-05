@@ -9,10 +9,17 @@
 
         private void aboutProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Вывод информации о программе
+            string version = ThisAssembly.Git.Tag;
+
+            if (string.IsNullOrEmpty(version))
+            {
+                version = ThisAssembly.Git.Commit;
+            }
+
             MessageBox.Show(
                 $"Информационная система: Автосервис\n" +
-                $"Версия: {ThisAssembly.Git.Commit}\n" +
+                $"Версия: {version}\n" +
+                $"Дата релиза: {ThisAssembly.Git.CommitDate}\n" +
                 $"Автор: Потапов Н.С.",
                 "Информация о программе",
                 MessageBoxButtons.OK,
