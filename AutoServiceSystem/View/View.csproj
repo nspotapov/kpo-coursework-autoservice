@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Settings\Settings.csproj" />
+  </ItemGroup>
+
 </Project>

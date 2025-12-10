@@ -5,9 +5,10 @@
         public FormMain()
         {
             InitializeComponent();
+            SetTitle("Иванов А.А. (Менеджер)");
         }
 
-        private void aboutProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string version = ThisAssembly.Git.Tag;
 
@@ -26,9 +27,10 @@
                 MessageBoxIcon.Information
             );
         }
+
         private void ClearStatusLabel()
         {
-            SetStatusLabel(string.Empty, Control.DefaultForeColor);
+            SetStatusLabel(string.Empty, DefaultForeColor);
         }
 
         private void SetStatusLabel(string text, Color color)
@@ -44,7 +46,12 @@
 
         private void ShowInfoStatus(string text)
         {
-            SetStatusLabel(text, Control.DefaultForeColor);
+            SetStatusLabel(text, DefaultForeColor);
+        }
+
+        private void SetTitle(string text)
+        {
+            Text = Settings.GlobalConstants.AppName + (string.IsNullOrEmpty(text) ? string.Empty : (" " + text));
         }
 
         private void FormMain_Load(object sender, EventArgs e)
