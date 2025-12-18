@@ -322,7 +322,7 @@
             // 
             tabPageCars.Controls.Add(tableLayoutPanelCars);
             tabPageCars.Location = new Point(4, 24);
-            tabPageCars.Name = "tabPageCars";6
+            tabPageCars.Name = "tabPageCars";
             tabPageCars.Padding = new Padding(3);
             tabPageCars.Size = new Size(1285, 540);
             tabPageCars.TabIndex = 1;
