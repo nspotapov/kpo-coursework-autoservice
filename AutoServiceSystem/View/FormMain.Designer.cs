@@ -239,8 +239,8 @@
             // 
             tableLayoutPanelOrders.ColumnCount = 1;
             tableLayoutPanelOrders.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelOrders.Controls.Add(dataGridViewOrders, 0, 1);
             tableLayoutPanelOrders.Controls.Add(tableLayoutPanelOrderInstruments, 0, 0);
+            tableLayoutPanelOrders.Controls.Add(dataGridViewOrders, 0, 1);
             tableLayoutPanelOrders.Dock = DockStyle.Fill;
             tableLayoutPanelOrders.Location = new Point(3, 3);
             tableLayoutPanelOrders.Name = "tableLayoutPanelOrders";
@@ -322,7 +322,7 @@
             // 
             tabPageCars.Controls.Add(tableLayoutPanelCars);
             tabPageCars.Location = new Point(4, 24);
-            tabPageCars.Name = "tabPageCars";
+            tabPageCars.Name = "tabPageCars";6
             tabPageCars.Padding = new Padding(3);
             tabPageCars.Size = new Size(1285, 540);
             tabPageCars.TabIndex = 1;
