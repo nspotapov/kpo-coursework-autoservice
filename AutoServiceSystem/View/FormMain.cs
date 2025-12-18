@@ -110,23 +110,5 @@ namespace View
         {
             // TODO: Обновлять результат поиска
         }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D1) == Keys.D1)
-            {
-                tabControl.SelectedIndex = 0;
-            }
-            else if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D2) == Keys.D2)
-            {
-                tabControl.SelectedIndex = 1;
-            }
-            else if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D3) == Keys.D3)
-            {
-                tabControl.SelectedIndex = 2;
-            }
-
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
     }
 }
