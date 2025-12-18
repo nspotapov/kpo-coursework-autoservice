@@ -1,4 +1,5 @@
-﻿namespace View
+﻿
+namespace View
 {
     public partial class FormMain : Form
     {
@@ -58,6 +59,74 @@
         {
             ClearStatusLabel();
             // TODO: Загрузка данных
+        }
+
+        private void CreateItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Проверять на какой вкладке находится пользователь и открывать окно создания соответствующего элемента
+        }
+
+        private void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Проверять, что элемент списка выбран и открывать окно редактирования элемента
+        }
+
+        private void dateTimePickerOrderFilterDateFrom_ValueChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат фильтрации
+        }
+
+        private void dateTimePickerOrderFilterDateTo_ValueChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат фильтрации
+        }
+
+        private void comboBoxOrderFilterStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат фильтрации
+        }
+
+        private void comboBoxOrderFilterWorker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат фильтрации
+        }
+
+        private void textBoxOrderFilterSearch_TextChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат фильтрации + поиск
+        }
+
+        private void textBoxCarsSearch_TextChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат поиска
+        }
+
+        private void textBoxClientsSearch_TextChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат поиска
+        }
+
+        private void comboBoxClientsTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: Обновлять результат поиска
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D1) == Keys.D1)
+            {
+                tabControl.SelectedIndex = 0;
+            }
+            else if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D2) == Keys.D2)
+            {
+                tabControl.SelectedIndex = 1;
+            }
+            else if ((keyData & Keys.Control) == Keys.Control && (keyData & Keys.D3) == Keys.D3)
+            {
+                tabControl.SelectedIndex = 2;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
