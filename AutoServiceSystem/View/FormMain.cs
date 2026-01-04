@@ -110,5 +110,25 @@ namespace View
         {
             // TODO: Обновлять результат поиска
         }
+
+        private void SystemUsersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Открыть окно управления списком системных пользователей
+        }
+
+        private void buttonOrdersFiltersSubmit_Click(object sender, EventArgs e)
+        {
+            // TODO: Применить фильтры на вкладке заказ-нарядов
+        }
+
+        private void buttonCarsFiltersSubmit_Click(object sender, EventArgs e)
+        {
+            // TODO: Применить фильтры на вкладке автомобилей
+        }
+
+        private void buttonClientsFiltersSubmit_Click(object sender, EventArgs e)
+        {
+            // TODO: Применить фильтры на вкладке клиентов
+        }
     }
 }

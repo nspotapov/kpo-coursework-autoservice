@@ -49,15 +49,18 @@
             tabControl = new TabControl();
             tabPageOrders = new TabPage();
             tableLayoutPanelOrders = new TableLayoutPanel();
-            tableLayoutPanelOrderInstruments = new TableLayoutPanel();
+            tableLayoutPanelOrdersFilter = new TableLayoutPanel();
             textBoxOrderFilterSearch = new TextBox();
             dateTimePickerOrderFilterDateFrom = new DateTimePicker();
             dateTimePickerOrderFilterDateTo = new DateTimePicker();
             comboBoxOrderFilterStatus = new ComboBox();
             comboBoxOrderFilterWorker = new ComboBox();
+            buttonOrdersFiltersSubmit = new Button();
             tabPageCars = new TabPage();
             tableLayoutPanelCars = new TableLayoutPanel();
+            tableLayoutPanelCarsFilter = new TableLayoutPanel();
             textBoxCarsSearch = new TextBox();
+            buttonCarsFiltersSubmit = new Button();
             dataGridViewCars = new DataGridView();
             ColumnStateMark = new DataGridViewTextBoxColumn();
             ColumnBrand = new DataGridViewTextBoxColumn();
@@ -73,15 +76,17 @@
             tableLayoutPanelClientsFilter = new TableLayoutPanel();
             textBoxClientsSearch = new TextBox();
             comboBoxClientsTypeFilter = new ComboBox();
+            buttonClientsFiltersSubmit = new Button();
             statusStrip.SuspendLayout();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrders).BeginInit();
             tabControl.SuspendLayout();
             tabPageOrders.SuspendLayout();
             tableLayoutPanelOrders.SuspendLayout();
-            tableLayoutPanelOrderInstruments.SuspendLayout();
+            tableLayoutPanelOrdersFilter.SuspendLayout();
             tabPageCars.SuspendLayout();
             tableLayoutPanelCars.SuspendLayout();
+            tableLayoutPanelCarsFilter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewCars).BeginInit();
             tabPageClients.SuspendLayout();
             tableLayoutPanelClients.SuspendLayout();
@@ -139,6 +144,7 @@
             SystemUsersToolStripMenuItem.Name = "SystemUsersToolStripMenuItem";
             SystemUsersToolStripMenuItem.Size = new Size(152, 22);
             SystemUsersToolStripMenuItem.Text = "Пользователи";
+            SystemUsersToolStripMenuItem.Click += SystemUsersToolStripMenuItem_Click;
             // 
             // ItemToolStripMenuItem
             // 
@@ -239,7 +245,7 @@
             // 
             tableLayoutPanelOrders.ColumnCount = 1;
             tableLayoutPanelOrders.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelOrders.Controls.Add(tableLayoutPanelOrderInstruments, 0, 0);
+            tableLayoutPanelOrders.Controls.Add(tableLayoutPanelOrdersFilter, 0, 0);
             tableLayoutPanelOrders.Controls.Add(dataGridViewOrders, 0, 1);
             tableLayoutPanelOrders.Dock = DockStyle.Fill;
             tableLayoutPanelOrders.Location = new Point(3, 3);
@@ -250,40 +256,42 @@
             tableLayoutPanelOrders.Size = new Size(1279, 534);
             tableLayoutPanelOrders.TabIndex = 4;
             // 
-            // tableLayoutPanelOrderInstruments
+            // tableLayoutPanelOrdersFilter
             // 
-            tableLayoutPanelOrderInstruments.ColumnCount = 5;
-            tableLayoutPanelOrderInstruments.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelOrderInstruments.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanelOrderInstruments.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanelOrderInstruments.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanelOrderInstruments.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanelOrderInstruments.Controls.Add(textBoxOrderFilterSearch, 0, 0);
-            tableLayoutPanelOrderInstruments.Controls.Add(dateTimePickerOrderFilterDateFrom, 1, 0);
-            tableLayoutPanelOrderInstruments.Controls.Add(dateTimePickerOrderFilterDateTo, 2, 0);
-            tableLayoutPanelOrderInstruments.Controls.Add(comboBoxOrderFilterStatus, 3, 0);
-            tableLayoutPanelOrderInstruments.Controls.Add(comboBoxOrderFilterWorker, 4, 0);
-            tableLayoutPanelOrderInstruments.Dock = DockStyle.Fill;
-            tableLayoutPanelOrderInstruments.Location = new Point(3, 3);
-            tableLayoutPanelOrderInstruments.Name = "tableLayoutPanelOrderInstruments";
-            tableLayoutPanelOrderInstruments.RowCount = 1;
-            tableLayoutPanelOrderInstruments.RowStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelOrderInstruments.Size = new Size(1273, 29);
-            tableLayoutPanelOrderInstruments.TabIndex = 3;
+            tableLayoutPanelOrdersFilter.ColumnCount = 6;
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelOrdersFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
+            tableLayoutPanelOrdersFilter.Controls.Add(textBoxOrderFilterSearch, 0, 0);
+            tableLayoutPanelOrdersFilter.Controls.Add(dateTimePickerOrderFilterDateFrom, 1, 0);
+            tableLayoutPanelOrdersFilter.Controls.Add(dateTimePickerOrderFilterDateTo, 2, 0);
+            tableLayoutPanelOrdersFilter.Controls.Add(comboBoxOrderFilterStatus, 3, 0);
+            tableLayoutPanelOrdersFilter.Controls.Add(comboBoxOrderFilterWorker, 4, 0);
+            tableLayoutPanelOrdersFilter.Controls.Add(buttonOrdersFiltersSubmit, 5, 0);
+            tableLayoutPanelOrdersFilter.Dock = DockStyle.Fill;
+            tableLayoutPanelOrdersFilter.Location = new Point(3, 3);
+            tableLayoutPanelOrdersFilter.Name = "tableLayoutPanelOrdersFilter";
+            tableLayoutPanelOrdersFilter.RowCount = 1;
+            tableLayoutPanelOrdersFilter.RowStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelOrdersFilter.Size = new Size(1273, 29);
+            tableLayoutPanelOrdersFilter.TabIndex = 3;
             // 
             // textBoxOrderFilterSearch
             // 
             textBoxOrderFilterSearch.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             textBoxOrderFilterSearch.Location = new Point(3, 3);
             textBoxOrderFilterSearch.Name = "textBoxOrderFilterSearch";
-            textBoxOrderFilterSearch.PlaceholderText = "Поиск по заказ-нарядам";
-            textBoxOrderFilterSearch.Size = new Size(360, 23);
+            textBoxOrderFilterSearch.PlaceholderText = "Поиск";
+            textBoxOrderFilterSearch.Size = new Size(290, 23);
             textBoxOrderFilterSearch.TabIndex = 1;
             textBoxOrderFilterSearch.TextChanged += textBoxOrderFilterSearch_TextChanged;
             // 
             // dateTimePickerOrderFilterDateFrom
             // 
-            dateTimePickerOrderFilterDateFrom.Location = new Point(369, 3);
+            dateTimePickerOrderFilterDateFrom.Location = new Point(299, 3);
             dateTimePickerOrderFilterDateFrom.Name = "dateTimePickerOrderFilterDateFrom";
             dateTimePickerOrderFilterDateFrom.Size = new Size(145, 23);
             dateTimePickerOrderFilterDateFrom.TabIndex = 0;
@@ -291,7 +299,7 @@
             // 
             // dateTimePickerOrderFilterDateTo
             // 
-            dateTimePickerOrderFilterDateTo.Location = new Point(520, 3);
+            dateTimePickerOrderFilterDateTo.Location = new Point(450, 3);
             dateTimePickerOrderFilterDateTo.Name = "dateTimePickerOrderFilterDateTo";
             dateTimePickerOrderFilterDateTo.Size = new Size(143, 23);
             dateTimePickerOrderFilterDateTo.TabIndex = 5;
@@ -302,7 +310,7 @@
             comboBoxOrderFilterStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxOrderFilterStatus.FormattingEnabled = true;
             comboBoxOrderFilterStatus.Items.AddRange(new object[] { "Все статусы" });
-            comboBoxOrderFilterStatus.Location = new Point(669, 3);
+            comboBoxOrderFilterStatus.Location = new Point(599, 3);
             comboBoxOrderFilterStatus.Name = "comboBoxOrderFilterStatus";
             comboBoxOrderFilterStatus.Size = new Size(252, 23);
             comboBoxOrderFilterStatus.TabIndex = 4;
@@ -312,11 +320,22 @@
             // 
             comboBoxOrderFilterWorker.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxOrderFilterWorker.Items.AddRange(new object[] { "Все мастера" });
-            comboBoxOrderFilterWorker.Location = new Point(927, 3);
+            comboBoxOrderFilterWorker.Location = new Point(857, 3);
             comboBoxOrderFilterWorker.Name = "comboBoxOrderFilterWorker";
             comboBoxOrderFilterWorker.Size = new Size(343, 23);
             comboBoxOrderFilterWorker.TabIndex = 6;
             comboBoxOrderFilterWorker.SelectedIndexChanged += comboBoxOrderFilterWorker_SelectedIndexChanged;
+            // 
+            // buttonOrdersFiltersSubmit
+            // 
+            buttonOrdersFiltersSubmit.Dock = DockStyle.Fill;
+            buttonOrdersFiltersSubmit.Location = new Point(1206, 3);
+            buttonOrdersFiltersSubmit.Name = "buttonOrdersFiltersSubmit";
+            buttonOrdersFiltersSubmit.Size = new Size(64, 23);
+            buttonOrdersFiltersSubmit.TabIndex = 7;
+            buttonOrdersFiltersSubmit.Text = "Найти";
+            buttonOrdersFiltersSubmit.UseVisualStyleBackColor = true;
+            buttonOrdersFiltersSubmit.Click += buttonOrdersFiltersSubmit_Click;
             // 
             // tabPageCars
             // 
@@ -332,8 +351,8 @@
             // tableLayoutPanelCars
             // 
             tableLayoutPanelCars.ColumnCount = 1;
-            tableLayoutPanelCars.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanelCars.Controls.Add(textBoxCarsSearch, 0, 0);
+            tableLayoutPanelCars.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelCars.Controls.Add(tableLayoutPanelCarsFilter, 0, 0);
             tableLayoutPanelCars.Controls.Add(dataGridViewCars, 0, 1);
             tableLayoutPanelCars.Dock = DockStyle.Fill;
             tableLayoutPanelCars.Location = new Point(3, 3);
@@ -344,25 +363,51 @@
             tableLayoutPanelCars.Size = new Size(1279, 534);
             tableLayoutPanelCars.TabIndex = 1;
             // 
+            // tableLayoutPanelCarsFilter
+            // 
+            tableLayoutPanelCarsFilter.ColumnCount = 2;
+            tableLayoutPanelCarsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelCarsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
+            tableLayoutPanelCarsFilter.Controls.Add(textBoxCarsSearch, 0, 0);
+            tableLayoutPanelCarsFilter.Controls.Add(buttonCarsFiltersSubmit, 1, 0);
+            tableLayoutPanelCarsFilter.Dock = DockStyle.Fill;
+            tableLayoutPanelCarsFilter.Location = new Point(3, 3);
+            tableLayoutPanelCarsFilter.Name = "tableLayoutPanelCarsFilter";
+            tableLayoutPanelCarsFilter.RowCount = 1;
+            tableLayoutPanelCarsFilter.RowStyles.Add(new RowStyle());
+            tableLayoutPanelCarsFilter.Size = new Size(1273, 29);
+            tableLayoutPanelCarsFilter.TabIndex = 2;
+            // 
             // textBoxCarsSearch
             // 
             textBoxCarsSearch.Dock = DockStyle.Fill;
             textBoxCarsSearch.Location = new Point(3, 3);
             textBoxCarsSearch.Name = "textBoxCarsSearch";
-            textBoxCarsSearch.PlaceholderText = "Поиск по автомобилям";
-            textBoxCarsSearch.Size = new Size(1273, 23);
+            textBoxCarsSearch.PlaceholderText = "Поиск";
+            textBoxCarsSearch.Size = new Size(1197, 23);
             textBoxCarsSearch.TabIndex = 1;
             textBoxCarsSearch.TextChanged += textBoxCarsSearch_TextChanged;
+            // 
+            // buttonCarsFiltersSubmit
+            // 
+            buttonCarsFiltersSubmit.Dock = DockStyle.Fill;
+            buttonCarsFiltersSubmit.Location = new Point(1206, 3);
+            buttonCarsFiltersSubmit.Name = "buttonCarsFiltersSubmit";
+            buttonCarsFiltersSubmit.Size = new Size(64, 23);
+            buttonCarsFiltersSubmit.TabIndex = 2;
+            buttonCarsFiltersSubmit.Text = "Найти";
+            buttonCarsFiltersSubmit.UseVisualStyleBackColor = true;
+            buttonCarsFiltersSubmit.Click += buttonCarsFiltersSubmit_Click;
             // 
             // dataGridViewCars
             // 
             dataGridViewCars.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCars.Columns.AddRange(new DataGridViewColumn[] { ColumnStateMark, ColumnBrand, ColumnModel, ColumnYear, ColumnColor, ColumnVIN });
             dataGridViewCars.Dock = DockStyle.Fill;
-            dataGridViewCars.Location = new Point(3, 32);
+            dataGridViewCars.Location = new Point(3, 38);
             dataGridViewCars.Name = "dataGridViewCars";
             dataGridViewCars.RowHeadersVisible = false;
-            dataGridViewCars.Size = new Size(1273, 499);
+            dataGridViewCars.Size = new Size(1273, 493);
             dataGridViewCars.TabIndex = 0;
             // 
             // ColumnStateMark
@@ -448,12 +493,13 @@
             // 
             // tableLayoutPanelClientsFilter
             // 
-            tableLayoutPanelClientsFilter.AutoSize = true;
-            tableLayoutPanelClientsFilter.ColumnCount = 2;
+            tableLayoutPanelClientsFilter.ColumnCount = 3;
             tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
             tableLayoutPanelClientsFilter.Controls.Add(textBoxClientsSearch, 0, 0);
             tableLayoutPanelClientsFilter.Controls.Add(comboBoxClientsTypeFilter, 1, 0);
+            tableLayoutPanelClientsFilter.Controls.Add(buttonClientsFiltersSubmit, 2, 0);
             tableLayoutPanelClientsFilter.Dock = DockStyle.Fill;
             tableLayoutPanelClientsFilter.Location = new Point(3, 3);
             tableLayoutPanelClientsFilter.Name = "tableLayoutPanelClientsFilter";
@@ -467,8 +513,8 @@
             textBoxClientsSearch.Dock = DockStyle.Fill;
             textBoxClientsSearch.Location = new Point(3, 3);
             textBoxClientsSearch.Name = "textBoxClientsSearch";
-            textBoxClientsSearch.PlaceholderText = "Поиск по клиентам";
-            textBoxClientsSearch.Size = new Size(1025, 23);
+            textBoxClientsSearch.PlaceholderText = "Поиск";
+            textBoxClientsSearch.Size = new Size(955, 23);
             textBoxClientsSearch.TabIndex = 1;
             textBoxClientsSearch.TextChanged += textBoxClientsSearch_TextChanged;
             // 
@@ -477,11 +523,22 @@
             comboBoxClientsTypeFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxClientsTypeFilter.FormattingEnabled = true;
             comboBoxClientsTypeFilter.Items.AddRange(new object[] { "Все типы", "Физические лица", "Юридические лица" });
-            comboBoxClientsTypeFilter.Location = new Point(1034, 3);
+            comboBoxClientsTypeFilter.Location = new Point(964, 3);
             comboBoxClientsTypeFilter.Name = "comboBoxClientsTypeFilter";
             comboBoxClientsTypeFilter.Size = new Size(236, 23);
             comboBoxClientsTypeFilter.TabIndex = 0;
             comboBoxClientsTypeFilter.SelectedIndexChanged += comboBoxClientsTypeFilter_SelectedIndexChanged;
+            // 
+            // buttonClientsFiltersSubmit
+            // 
+            buttonClientsFiltersSubmit.Dock = DockStyle.Fill;
+            buttonClientsFiltersSubmit.Location = new Point(1206, 3);
+            buttonClientsFiltersSubmit.Name = "buttonClientsFiltersSubmit";
+            buttonClientsFiltersSubmit.Size = new Size(64, 23);
+            buttonClientsFiltersSubmit.TabIndex = 2;
+            buttonClientsFiltersSubmit.Text = "Найти";
+            buttonClientsFiltersSubmit.UseVisualStyleBackColor = true;
+            buttonClientsFiltersSubmit.Click += buttonClientsFiltersSubmit_Click;
             // 
             // FormMain
             // 
@@ -504,15 +561,15 @@
             tabControl.ResumeLayout(false);
             tabPageOrders.ResumeLayout(false);
             tableLayoutPanelOrders.ResumeLayout(false);
-            tableLayoutPanelOrderInstruments.ResumeLayout(false);
-            tableLayoutPanelOrderInstruments.PerformLayout();
+            tableLayoutPanelOrdersFilter.ResumeLayout(false);
+            tableLayoutPanelOrdersFilter.PerformLayout();
             tabPageCars.ResumeLayout(false);
             tableLayoutPanelCars.ResumeLayout(false);
-            tableLayoutPanelCars.PerformLayout();
+            tableLayoutPanelCarsFilter.ResumeLayout(false);
+            tableLayoutPanelCarsFilter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewCars).EndInit();
             tabPageClients.ResumeLayout(false);
             tableLayoutPanelClients.ResumeLayout(false);
-            tableLayoutPanelClients.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewClients).EndInit();
             tableLayoutPanelClientsFilter.ResumeLayout(false);
             tableLayoutPanelClientsFilter.PerformLayout();
@@ -533,7 +590,7 @@
         private TabPage tabPageCars;
         private DataGridView dataGridViewCars;
         private DateTimePicker dateTimePickerOrderFilterDateFrom;
-        private TableLayoutPanel tableLayoutPanelOrderInstruments;
+        private TableLayoutPanel tableLayoutPanelOrdersFilter;
         private ComboBox comboBoxOrderFilterStatus;
         private ComboBox comboBoxOrderFilterWorker;
         private TextBox textBoxOrderFilterSearch;
@@ -567,5 +624,9 @@
         private DataGridViewTextBoxColumn ColumnContactInfo;
         private ComboBox comboBoxClientsTypeFilter;
         private TextBox textBoxClientsSearch;
+        private TableLayoutPanel tableLayoutPanelCarsFilter;
+        private Button buttonOrdersFiltersSubmit;
+        private Button buttonCarsFiltersSubmit;
+        private Button buttonClientsFiltersSubmit;
     }
 }
