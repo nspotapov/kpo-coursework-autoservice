@@ -1,5 +1,4 @@
-﻿
-namespace View
+﻿namespace View
 {
     public partial class FormMain : Form
     {
@@ -58,7 +57,32 @@ namespace View
         private void FormMain_Load(object sender, EventArgs e)
         {
             ClearStatusLabel();
+            PrepareOrdersFilters();
             // TODO: Загрузка данных
+        }
+
+        private static DateTime GetWeekStartDate(DateTime date, System.Globalization.CultureInfo cultureInfo)
+        {
+            DayOfWeek firstDayOfWeek = cultureInfo.DateTimeFormat.FirstDayOfWeek;
+            return date.AddDays((Int32)firstDayOfWeek - (Int32)date.DayOfWeek);
+        }
+
+        private static DateTime GetWeekStartDate(DateTime date)
+        {
+            return GetWeekStartDate(date, Thread.CurrentThread.CurrentCulture);
+        }
+
+        private static DateTime GetCurrentWeekStartDate()
+        {
+            return GetWeekStartDate(DateTime.Now.Date);
+        }
+
+        private void PrepareOrdersFilters()
+        {
+            var currentWeekStartDate = GetCurrentWeekStartDate();
+
+            dateTimePickerOrderFilterDateFrom.Value = currentWeekStartDate;
+            dateTimePickerOrderFilterDateTo.Value = currentWeekStartDate.AddMonths(1);
         }
 
         private void CreateItemToolStripMenuItem_Click(object sender, EventArgs e)

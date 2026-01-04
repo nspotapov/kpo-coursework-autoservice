@@ -291,6 +291,8 @@
             // 
             // dateTimePickerOrderFilterDateFrom
             // 
+            dateTimePickerOrderFilterDateFrom.CustomFormat = "dd MMMM yyyy г.";
+            dateTimePickerOrderFilterDateFrom.Format = DateTimePickerFormat.Custom;
             dateTimePickerOrderFilterDateFrom.Location = new Point(299, 3);
             dateTimePickerOrderFilterDateFrom.Name = "dateTimePickerOrderFilterDateFrom";
             dateTimePickerOrderFilterDateFrom.Size = new Size(145, 23);
@@ -299,6 +301,8 @@
             // 
             // dateTimePickerOrderFilterDateTo
             // 
+            dateTimePickerOrderFilterDateTo.CustomFormat = "dd MMMM yyyy г.";
+            dateTimePickerOrderFilterDateTo.Format = DateTimePickerFormat.Custom;
             dateTimePickerOrderFilterDateTo.Location = new Point(450, 3);
             dateTimePickerOrderFilterDateTo.Name = "dateTimePickerOrderFilterDateTo";
             dateTimePickerOrderFilterDateTo.Size = new Size(143, 23);
