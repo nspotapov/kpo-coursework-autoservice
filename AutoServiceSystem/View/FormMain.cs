@@ -1,4 +1,5 @@
-﻿namespace View
+﻿
+namespace View
 {
     public partial class FormMain : Form
     {
@@ -58,6 +59,7 @@
         {
             ClearStatusLabel();
             PrepareOrdersFilters();
+            PrepareClientsFilters();
             // TODO: Загрузка данных
         }
 
@@ -83,6 +85,14 @@
 
             dateTimePickerOrderFilterDateFrom.Value = currentWeekStartDate;
             dateTimePickerOrderFilterDateTo.Value = currentWeekStartDate.AddDays(13);
+
+            comboBoxOrderFilterStatus.SelectedIndex = 0;
+            comboBoxOrderFilterWorker.SelectedIndex = 0;
+        }
+
+        private void PrepareClientsFilters()
+        {
+            comboBoxClientsTypeFilter.SelectedIndex = 0;
         }
 
         private void CreateItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -153,6 +163,56 @@
         private void buttonClientsFiltersSubmit_Click(object sender, EventArgs e)
         {
             // TODO: Применить фильтры на вкладке клиентов
+        }
+
+        private void FocusOnSearchFieldOnCurrentTab()
+        {
+            if (tabControl.SelectedTab == tabPageOrders)
+            {
+                textBoxOrderFilterSearch.Focus();
+            }
+            else if (tabControl.SelectedTab == tabPageCars)
+            {
+                textBoxCarsFilterSearch.Focus();
+            }
+            else if (tabControl.SelectedTab == tabPageClients)
+            {
+                textBoxClientsFilterSearch.Focus();
+            }
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (MessageBox.Show("Выйти из программы?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                FocusOnSearchFieldOnCurrentTab();
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.D1))
+            {
+                tabControl.SelectTab(tabPageOrders);
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.D2))
+            {
+                tabControl.SelectTab(tabPageCars);
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.D3))
+            {
+                tabControl.SelectTab(tabPageClients);
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

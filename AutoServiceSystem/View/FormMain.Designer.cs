@@ -59,7 +59,7 @@
             tabPageCars = new TabPage();
             tableLayoutPanelCars = new TableLayoutPanel();
             tableLayoutPanelCarsFilter = new TableLayoutPanel();
-            textBoxCarsSearch = new TextBox();
+            textBoxCarsFilterSearch = new TextBox();
             buttonCarsFiltersSubmit = new Button();
             dataGridViewCars = new DataGridView();
             ColumnStateMark = new DataGridViewTextBoxColumn();
@@ -74,7 +74,7 @@
             ColumnClientType = new DataGridViewTextBoxColumn();
             ColumnContactInfo = new DataGridViewTextBoxColumn();
             tableLayoutPanelClientsFilter = new TableLayoutPanel();
-            textBoxClientsSearch = new TextBox();
+            textBoxClientsFilterSearch = new TextBox();
             comboBoxClientsTypeFilter = new ComboBox();
             buttonClientsFiltersSubmit = new Button();
             statusStrip.SuspendLayout();
@@ -176,6 +176,7 @@
             dataGridViewOrders.Location = new Point(3, 38);
             dataGridViewOrders.Name = "dataGridViewOrders";
             dataGridViewOrders.RowHeadersVisible = false;
+            dataGridViewOrders.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewOrders.Size = new Size(1273, 493);
             dataGridViewOrders.TabIndex = 2;
             // 
@@ -237,7 +238,6 @@
             tabPageOrders.Name = "tabPageOrders";
             tabPageOrders.Padding = new Padding(3);
             tabPageOrders.Size = new Size(1285, 540);
-            tabPageOrders.TabIndex = 0;
             tabPageOrders.Text = "Заказ-наряды";
             tabPageOrders.UseVisualStyleBackColor = true;
             // 
@@ -348,7 +348,6 @@
             tabPageCars.Name = "tabPageCars";
             tabPageCars.Padding = new Padding(3);
             tabPageCars.Size = new Size(1285, 540);
-            tabPageCars.TabIndex = 1;
             tabPageCars.Text = "Автомобили";
             tabPageCars.UseVisualStyleBackColor = true;
             // 
@@ -372,7 +371,7 @@
             tableLayoutPanelCarsFilter.ColumnCount = 2;
             tableLayoutPanelCarsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelCarsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
-            tableLayoutPanelCarsFilter.Controls.Add(textBoxCarsSearch, 0, 0);
+            tableLayoutPanelCarsFilter.Controls.Add(textBoxCarsFilterSearch, 0, 0);
             tableLayoutPanelCarsFilter.Controls.Add(buttonCarsFiltersSubmit, 1, 0);
             tableLayoutPanelCarsFilter.Dock = DockStyle.Fill;
             tableLayoutPanelCarsFilter.Location = new Point(3, 3);
@@ -382,15 +381,15 @@
             tableLayoutPanelCarsFilter.Size = new Size(1273, 29);
             tableLayoutPanelCarsFilter.TabIndex = 2;
             // 
-            // textBoxCarsSearch
+            // textBoxCarsFilterSearch
             // 
-            textBoxCarsSearch.Dock = DockStyle.Fill;
-            textBoxCarsSearch.Location = new Point(3, 3);
-            textBoxCarsSearch.Name = "textBoxCarsSearch";
-            textBoxCarsSearch.PlaceholderText = "Поиск";
-            textBoxCarsSearch.Size = new Size(1197, 23);
-            textBoxCarsSearch.TabIndex = 1;
-            textBoxCarsSearch.TextChanged += textBoxCarsSearch_TextChanged;
+            textBoxCarsFilterSearch.Dock = DockStyle.Fill;
+            textBoxCarsFilterSearch.Location = new Point(3, 3);
+            textBoxCarsFilterSearch.Name = "textBoxCarsFilterSearch";
+            textBoxCarsFilterSearch.PlaceholderText = "Поиск";
+            textBoxCarsFilterSearch.Size = new Size(1197, 23);
+            textBoxCarsFilterSearch.TabIndex = 1;
+            textBoxCarsFilterSearch.TextChanged += textBoxCarsSearch_TextChanged;
             // 
             // buttonCarsFiltersSubmit
             // 
@@ -411,6 +410,7 @@
             dataGridViewCars.Location = new Point(3, 38);
             dataGridViewCars.Name = "dataGridViewCars";
             dataGridViewCars.RowHeadersVisible = false;
+            dataGridViewCars.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewCars.Size = new Size(1273, 493);
             dataGridViewCars.TabIndex = 0;
             // 
@@ -454,7 +454,6 @@
             tabPageClients.Name = "tabPageClients";
             tabPageClients.Padding = new Padding(3);
             tabPageClients.Size = new Size(1285, 540);
-            tabPageClients.TabIndex = 2;
             tabPageClients.Text = "Клиенты";
             tabPageClients.UseVisualStyleBackColor = true;
             // 
@@ -481,6 +480,7 @@
             dataGridViewClients.Location = new Point(3, 38);
             dataGridViewClients.Name = "dataGridViewClients";
             dataGridViewClients.RowHeadersVisible = false;
+            dataGridViewClients.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewClients.Size = new Size(1273, 493);
             dataGridViewClients.TabIndex = 0;
             // 
@@ -501,7 +501,7 @@
             tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanelClientsFilter.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
-            tableLayoutPanelClientsFilter.Controls.Add(textBoxClientsSearch, 0, 0);
+            tableLayoutPanelClientsFilter.Controls.Add(textBoxClientsFilterSearch, 0, 0);
             tableLayoutPanelClientsFilter.Controls.Add(comboBoxClientsTypeFilter, 1, 0);
             tableLayoutPanelClientsFilter.Controls.Add(buttonClientsFiltersSubmit, 2, 0);
             tableLayoutPanelClientsFilter.Dock = DockStyle.Fill;
@@ -512,15 +512,15 @@
             tableLayoutPanelClientsFilter.Size = new Size(1273, 29);
             tableLayoutPanelClientsFilter.TabIndex = 1;
             // 
-            // textBoxClientsSearch
+            // textBoxClientsFilterSearch
             // 
-            textBoxClientsSearch.Dock = DockStyle.Fill;
-            textBoxClientsSearch.Location = new Point(3, 3);
-            textBoxClientsSearch.Name = "textBoxClientsSearch";
-            textBoxClientsSearch.PlaceholderText = "Поиск";
-            textBoxClientsSearch.Size = new Size(955, 23);
-            textBoxClientsSearch.TabIndex = 1;
-            textBoxClientsSearch.TextChanged += textBoxClientsSearch_TextChanged;
+            textBoxClientsFilterSearch.Dock = DockStyle.Fill;
+            textBoxClientsFilterSearch.Location = new Point(3, 3);
+            textBoxClientsFilterSearch.Name = "textBoxClientsFilterSearch";
+            textBoxClientsFilterSearch.PlaceholderText = "Поиск";
+            textBoxClientsFilterSearch.Size = new Size(955, 23);
+            textBoxClientsFilterSearch.TabIndex = 1;
+            textBoxClientsFilterSearch.TextChanged += textBoxClientsSearch_TextChanged;
             // 
             // comboBoxClientsTypeFilter
             // 
@@ -556,6 +556,7 @@
             MinimumSize = new Size(640, 480);
             Name = "FormMain";
             Text = "ИС Автосервис";
+            FormClosing += FormMain_FormClosing;
             Load += FormMain_Load;
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
@@ -601,7 +602,7 @@
         private TableLayoutPanel tableLayoutPanelOrders;
         private DateTimePicker dateTimePickerOrderFilterDateTo;
         private TableLayoutPanel tableLayoutPanelCars;
-        private TextBox textBoxCarsSearch;
+        private TextBox textBoxCarsFilterSearch;
         private ToolStripMenuItem SystemToolStripMenuItem;
         private ToolStripMenuItem SystemUsersToolStripMenuItem;
         private DataGridViewTextBoxColumn ColumnStateMark;
@@ -627,7 +628,7 @@
         private DataGridViewTextBoxColumn ColumnClientType;
         private DataGridViewTextBoxColumn ColumnContactInfo;
         private ComboBox comboBoxClientsTypeFilter;
-        private TextBox textBoxClientsSearch;
+        private TextBox textBoxClientsFilterSearch;
         private TableLayoutPanel tableLayoutPanelCarsFilter;
         private Button buttonOrdersFiltersSubmit;
         private Button buttonCarsFiltersSubmit;
