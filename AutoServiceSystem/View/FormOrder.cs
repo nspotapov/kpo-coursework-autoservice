@@ -2,6 +2,8 @@
 {
     public partial class FormOrder : Form
     {
+        public string? OrderId { get; set; }
+
         public FormOrder()
         {
             InitializeComponent();

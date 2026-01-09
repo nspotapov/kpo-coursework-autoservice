@@ -2,6 +2,8 @@
 {
     public partial class FormCar : Form
     {
+        public string? CarId { get; set; }
+
         public FormCar()
         {
             InitializeComponent();

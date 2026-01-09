@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace View
+﻿namespace View
 {
     public partial class FormClient : Form
     {
+        public string? ClientId { get; set; }
+
         public FormClient()
         {
             InitializeComponent();
+        }
+
+        private void FormClient_Load(object sender, EventArgs e)
+        {
+            // TODO: Загрузка данных
         }
     }
 }

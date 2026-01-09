@@ -1,5 +1,4 @@
-﻿
-namespace View
+﻿namespace View
 {
     public partial class FormMain : Form
     {
@@ -95,14 +94,72 @@ namespace View
             comboBoxClientsTypeFilter.SelectedIndex = 0;
         }
 
+        private void ShowCreateOrEditDialog(bool isEditDialog)
+        {
+            if (tabControl.SelectedTab == tabPageOrders)
+            {
+                var form = new FormOrder();
+
+                if (isEditDialog)
+                {
+                    if (dataGridViewOrders.SelectedRows.Count == 1)
+                    {
+                        form.OrderId = (string)dataGridViewOrders.SelectedRows[0].Cells[0].Value;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                form.ShowDialog();
+            }
+            else if (tabControl.SelectedTab == tabPageCars)
+            {
+                var form = new FormCar();
+
+                if (isEditDialog)
+                {
+                    if (dataGridViewCars.SelectedRows.Count == 1)
+                    {
+                        form.CarId = (string)dataGridViewCars.SelectedRows[0].Cells[0].Value;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                form.ShowDialog();
+            }
+            else if (tabControl.SelectedTab == tabPageClients)
+            {
+                var form = new FormClient();
+
+                if (isEditDialog)
+                {
+                    if (dataGridViewClients.SelectedRows.Count == 1)
+                    {
+                        form.ClientId = (string)dataGridViewClients.SelectedRows[0].Cells[0].Value;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                form.ShowDialog();
+            }
+        }
+
         private void CreateItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Проверять на какой вкладке находится пользователь и открывать окно создания соответствующего элемента
+            ShowCreateOrEditDialog(isEditDialog: false);
         }
 
         private void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Проверять, что элемент списка выбран и открывать окно редактирования элемента
+            ShowCreateOrEditDialog(isEditDialog: true);
         }
 
         private void dateTimePickerOrderFilterDateFrom_ValueChanged(object sender, EventArgs e)
@@ -125,21 +182,6 @@ namespace View
             // TODO: Обновлять результат фильтрации
         }
 
-        private void textBoxOrderFilterSearch_TextChanged(object sender, EventArgs e)
-        {
-            // TODO: Обновлять результат фильтрации + поиск
-        }
-
-        private void textBoxCarsSearch_TextChanged(object sender, EventArgs e)
-        {
-            // TODO: Обновлять результат поиска
-        }
-
-        private void textBoxClientsSearch_TextChanged(object sender, EventArgs e)
-        {
-            // TODO: Обновлять результат поиска
-        }
-
         private void comboBoxClientsTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             // TODO: Обновлять результат поиска
@@ -150,19 +192,19 @@ namespace View
             // TODO: Открыть окно управления списком системных пользователей
         }
 
-        private void buttonOrdersFiltersSubmit_Click(object sender, EventArgs e)
+        private void buttonOrdersFiltersSearchSubmit_Click(object sender, EventArgs e)
         {
-            // TODO: Применить фильтры на вкладке заказ-нарядов
+            // TODO: Обновить результат поиска на вкладке заказ-нарядов
         }
 
-        private void buttonCarsFiltersSubmit_Click(object sender, EventArgs e)
+        private void buttonCarsFiltersSearchSubmit_Click(object sender, EventArgs e)
         {
-            // TODO: Применить фильтры на вкладке автомобилей
+            // TODO: Обновить результат поиска на вкладке автомобилей
         }
 
-        private void buttonClientsFiltersSubmit_Click(object sender, EventArgs e)
+        private void buttonClientsFiltersSearchSubmit_Click(object sender, EventArgs e)
         {
-            // TODO: Применить фильтры на вкладке клиентов
+            // TODO: Обновить результат поиска на вкладке клиентов
         }
 
         private void FocusOnSearchFieldOnCurrentTab()
