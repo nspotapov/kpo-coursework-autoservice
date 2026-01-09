@@ -82,7 +82,7 @@
             var currentWeekStartDate = GetCurrentWeekStartDate();
 
             dateTimePickerOrderFilterDateFrom.Value = currentWeekStartDate;
-            dateTimePickerOrderFilterDateTo.Value = currentWeekStartDate.AddMonths(1);
+            dateTimePickerOrderFilterDateTo.Value = currentWeekStartDate.AddDays(13);
         }
 
         private void CreateItemToolStripMenuItem_Click(object sender, EventArgs e)
