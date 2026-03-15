@@ -14,6 +14,7 @@ namespace View
         {
             InitializeComponent();
 
+            // Создаём НОВЫЙ контекст для этой формы
             var optionsBuilder = new DbContextOptionsBuilder<AutoserviceDbContext>()
                 .UseNpgsql(Settings.DBConfig.ConnectionString)
                 .Options;

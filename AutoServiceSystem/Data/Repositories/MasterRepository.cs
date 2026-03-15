@@ -21,6 +21,7 @@ public class MasterRepository
     public async Task<List<Master>> GetAllAsync()
     {
         return await _context.Masters
+            .AsNoTracking()
             .Where(m => m.IsActive)
             .OrderBy(m => m.LastName)
             .ThenBy(m => m.FirstName)

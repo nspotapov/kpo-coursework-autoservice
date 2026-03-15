@@ -8,7 +8,7 @@ public static class DBConfig
     /// <summary>
     /// Строка подключения к PostgreSQL
     /// </summary>
-    public static string ConnectionString => 
+    public static string ConnectionString =>
         "Host=localhost;Port=5432;Database=autoservice;Username=postgres;Password=postgres";
 
     /// <summary>

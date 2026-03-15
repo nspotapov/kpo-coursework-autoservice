@@ -11,6 +11,11 @@ namespace View
         private readonly OrderRepository _orderRepository;
         private readonly ClientRepository _clientRepository;
         private readonly CarRepository _carRepository;
+        private readonly UserRepository _userRepository;
+        private readonly ServiceRepository _serviceRepository;
+        private readonly PartRepository _partRepository;
+        private readonly MasterRepository _masterRepository;
+        private readonly CheckRepository _checkRepository;
 
         public FormMainAdmin()
         {
@@ -25,6 +30,11 @@ namespace View
             _orderRepository = new OrderRepository(_dbContext);
             _clientRepository = new ClientRepository(_dbContext);
             _carRepository = new CarRepository(_dbContext);
+            _userRepository = new UserRepository(_dbContext);
+            _serviceRepository = new ServiceRepository(_dbContext);
+            _partRepository = new PartRepository(_dbContext);
+            _masterRepository = new MasterRepository(_dbContext);
+            _checkRepository = new CheckRepository(_dbContext);
         }
 
         /// <summary>
@@ -203,8 +213,10 @@ namespace View
                     }
                 }
 
-                form.ShowDialog();
-                await LoadOrdersAsync();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    await LoadOrdersAsync();
+                }
             }
             else if (tabControl.SelectedTab == tabPageCars)
             {
@@ -222,8 +234,10 @@ namespace View
                     }
                 }
 
-                form.ShowDialog();
-                await LoadCarsAsync();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    await LoadCarsAsync();
+                }
             }
             else if (tabControl.SelectedTab == tabPageClients)
             {
@@ -241,8 +255,10 @@ namespace View
                     }
                 }
 
-                form.ShowDialog();
-                await LoadClientsAsync();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    await LoadClientsAsync();
+                }
             }
         }
 
@@ -429,7 +445,7 @@ namespace View
             try
             {
                 var cars = await _carRepository.GetAllAsync();
-                
+
                 dataGridViewCars.Rows.Clear();
                 foreach (var car in cars)
                 {
@@ -492,6 +508,86 @@ namespace View
         private async void buttonClientsFiltersSearchSubmit_Click(object sender, EventArgs e)
         {
             await LoadClientsAsync();
+        }
+
+        #endregion
+
+        #region Additional Load Methods
+
+        private async Task LoadUsersAsync()
+        {
+            try
+            {
+                var users = await _userRepository.GetAllUsersAsync();
+
+                // Находим вкладку пользователей (если есть) или обновляем через меню
+                // В данной реализации главная форма не отображает пользователей в DataGridView
+                // Поэтому метод оставлен для будущего расширения
+            }
+            catch (Exception ex)
+            {
+                ShowErrorStatus($"Ошибка загрузки пользователей: {ex.Message}");
+            }
+        }
+
+        private async Task LoadServicesAsync()
+        {
+            try
+            {
+                var services = await _serviceRepository.GetAllAsync();
+
+                // Главная форма не отображает услуги в DataGridView
+                // Метод оставлен для будущего расширения
+            }
+            catch (Exception ex)
+            {
+                ShowErrorStatus($"Ошибка загрузки услуг: {ex.Message}");
+            }
+        }
+
+        private async Task LoadPartsAsync()
+        {
+            try
+            {
+                var parts = await _partRepository.GetAllAsync();
+
+                // Главная форма не отображает запчасти в DataGridView
+                // Метод оставлен для будущего расширения
+            }
+            catch (Exception ex)
+            {
+                ShowErrorStatus($"Ошибка загрузки запчастей: {ex.Message}");
+            }
+        }
+
+        private async Task LoadMastersAsync()
+        {
+            try
+            {
+                var masters = await _masterRepository.GetAllAsync();
+
+                // Главная форма не отображает мастеров в DataGridView
+                // Метод оставлен для будущего расширения
+            }
+            catch (Exception ex)
+            {
+                ShowErrorStatus($"Ошибка загрузки мастеров: {ex.Message}");
+            }
+        }
+
+        private async Task LoadChecksAsync()
+        {
+            try
+            {
+                var checks = await _checkRepository.GetAllAsync();
+
+                // Главная форма не отображает чеки в DataGridView
+                // Метод оставлен для будущего расширения
+            }
+            catch (Exception ex)
+            {
+                ShowErrorStatus($"Ошибка загрузки чеков: {ex.Message}");
+            }
         }
 
         #endregion

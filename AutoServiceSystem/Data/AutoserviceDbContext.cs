@@ -55,7 +55,13 @@ public class AutoserviceDbContext : DbContext
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.MiddleName).HasMaxLength(100);
             entity.Property(e => e.Phone).HasMaxLength(20);
-            entity.Property(e => e.Role).IsRequired().HasConversion<string>();
+            
+            // Конвертируем enum в lowercase строку для БД
+            entity.Property(e => e.Role)
+                  .HasConversion(
+                      v => v == UserRole.Admin ? "admin" : "manager",
+                      v => v == "admin" ? UserRole.Admin : UserRole.Manager);
+            
             entity.HasIndex(e => e.Username).IsUnique();
         });
 
@@ -128,7 +134,23 @@ public class AutoserviceDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.OrderNumber).IsRequired().HasMaxLength(20);
-            entity.Property(e => e.Status).IsRequired().HasConversion<string>();
+            
+            // Конвертируем enum в lowercase строку для БД
+            entity.Property(e => e.Status)
+                  .HasConversion(
+                      v => v == OrderStatus.Pending ? "pending" :
+                          v == OrderStatus.InProgress ? "in_progress" :
+                          v == OrderStatus.Completed ? "completed" :
+                          v == OrderStatus.Overdue ? "overdue" :
+                          v == OrderStatus.Cancelled ? "cancelled" :
+                          "pending",
+                      v => v == "pending" ? OrderStatus.Pending :
+                          v == "in_progress" ? OrderStatus.InProgress :
+                          v == "completed" ? OrderStatus.Completed :
+                          v == "overdue" ? OrderStatus.Overdue :
+                          v == "cancelled" ? OrderStatus.Cancelled :
+                          OrderStatus.Pending);
+            
             entity.Property(e => e.TotalPrice).HasPrecision(10, 2);
             entity.HasIndex(e => e.OrderNumber).IsUnique();
             entity.HasIndex(e => e.Status);

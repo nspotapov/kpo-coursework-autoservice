@@ -96,15 +96,29 @@ namespace View
                 return;
             }
 
+            // Явная валидация роли
+            if (comboBoxRole.SelectedIndex < 0 || comboBoxRole.SelectedIndex > 1)
+            {
+                MessageBox.Show("Выберите роль (admin или manager)", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Проверка уникальности username
+            var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username && (!UserId.HasValue || u.Id != UserId.Value));
+            if (existingUser != null)
+            {
+                MessageBox.Show("Пользователь с таким логином уже существует", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
                 DateTime? birthDate = null;
                 if (dateTimePickerBirthDate.Checked && dateTimePickerBirthDate.Value != dateTimePickerBirthDate.MinDate)
                 {
-                    // Конвертируем локальное время в UTC для сохранения
-                    birthDate = dateTimePickerBirthDate.Value.Date.Kind == DateTimeKind.Utc 
-                        ? dateTimePickerBirthDate.Value.Date 
-                        : dateTimePickerBirthDate.Value.Date.ToUniversalTime();
+                    // Явно создаём DateTime с Kind=Utc для корректной работы с PostgreSQL
+                    var dateValue = dateTimePickerBirthDate.Value;
+                    birthDate = new DateTime(dateValue.Year, dateValue.Month, dateValue.Day, 0, 0, 0, DateTimeKind.Utc);
                 }
 
                 if (UserId.HasValue)
@@ -113,6 +127,7 @@ namespace View
                     var user = await _dbContext.Users.FindAsync(UserId.Value);
                     if (user != null)
                     {
+                        user.Username = username;
                         user.LastName = lastName;
                         user.FirstName = firstName;
                         user.MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;
@@ -125,7 +140,6 @@ namespace View
                             user.Password = BCrypt.Net.BCrypt.HashPassword(password);
                         }
 
-                        _dbContext.Entry(user).State = EntityState.Modified;
                         await _dbContext.SaveChangesAsync();
                         MessageBox.Show("Пользователь обновлен", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -142,18 +156,20 @@ namespace View
                     var user = new User
                     {
                         Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password),
                         LastName = lastName,
                         FirstName = firstName,
                         MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName,
                         Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
                         BirthDate = birthDate,
-                        Role = role
+                        Role = role,
+                        CreatedAt = DateTime.UtcNow,
+                        IsActive = true
                     };
 
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(password);
                     _dbContext.Users.Add(user);
                     await _dbContext.SaveChangesAsync();
-                    
+
                     MessageBox.Show("Пользователь создан", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 

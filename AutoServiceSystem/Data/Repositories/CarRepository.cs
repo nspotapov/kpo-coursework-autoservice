@@ -21,6 +21,7 @@ public class CarRepository
     public async Task<List<Car>> GetAllAsync()
     {
         return await _context.Cars
+            .AsNoTracking()
             .Include(c => c.Owner)
             .OrderByDescending(c => c.CreatedAt)
             .ToListAsync();
@@ -32,6 +33,7 @@ public class CarRepository
     public async Task<Car?> GetByIdAsync(int id)
     {
         return await _context.Cars
+            .AsNoTracking()
             .Include(c => c.Owner)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
@@ -54,8 +56,19 @@ public class CarRepository
     /// </summary>
     public async Task UpdateAsync(Car car)
     {
-        _context.Cars.Update(car);
-        await _context.SaveChangesAsync();
+        var existing = await _context.Cars.FindAsync(car.Id);
+        if (existing != null)
+        {
+            existing.Brand = car.Brand;
+            existing.Model = car.Model;
+            existing.StateMark = car.StateMark;
+            existing.ProductionYear = car.ProductionYear;
+            existing.Color = car.Color;
+            existing.VinNumber = car.VinNumber;
+            existing.OwnerId = car.OwnerId;
+
+            await _context.SaveChangesAsync();
+        }
     }
 
     /// <summary>

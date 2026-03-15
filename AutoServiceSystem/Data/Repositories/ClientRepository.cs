@@ -21,6 +21,7 @@ public class ClientRepository
     public async Task<List<Client>> GetAllAsync()
     {
         return await _context.Clients
+            .AsNoTracking()
             .Where(c => c.IsActive)
             .OrderBy(c => c.LastName)
             .ToListAsync();

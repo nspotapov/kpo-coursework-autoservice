@@ -46,7 +46,12 @@
             comboBoxCar = new ComboBox();
             comboBoxMaster = new ComboBox();
             dateTimePickerServiceDateTime = new DateTimePicker();
+            buttonShowSchedule = new Button();
             comboBoxStatus = new ComboBox();
+            tableLayoutPanelClient = new TableLayoutPanel();
+            buttonAddClient = new Button();
+            tableLayoutPanelCar = new TableLayoutPanel();
+            buttonAddCar = new Button();
             tabPageServices = new TabPage();
             tableLayoutPanelServices = new TableLayoutPanel();
             dataGridViewServices = new DataGridView();
@@ -161,8 +166,8 @@
             tableLayoutPanelMain.Controls.Add(labelServiceDateTime, 0, 4);
             tableLayoutPanelMain.Controls.Add(labelStatus, 0, 5);
             tableLayoutPanelMain.Controls.Add(textBoxOrderNumber, 1, 0);
-            tableLayoutPanelMain.Controls.Add(comboBoxClient, 1, 1);
-            tableLayoutPanelMain.Controls.Add(comboBoxCar, 1, 2);
+            tableLayoutPanelMain.Controls.Add(tableLayoutPanelClient, 1, 1);
+            tableLayoutPanelMain.Controls.Add(tableLayoutPanelCar, 1, 2);
             tableLayoutPanelMain.Controls.Add(comboBoxMaster, 1, 3);
             tableLayoutPanelMain.Controls.Add(dateTimePickerServiceDateTime, 1, 4);
             tableLayoutPanelMain.Controls.Add(comboBoxStatus, 1, 5);
@@ -279,19 +284,30 @@
             comboBoxMaster.Name = "comboBoxMaster";
             comboBoxMaster.Size = new Size(632, 23);
             comboBoxMaster.TabIndex = 9;
-            // 
+            //
             // dateTimePickerServiceDateTime
-            // 
+            //
             dateTimePickerServiceDateTime.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             dateTimePickerServiceDateTime.Format = DateTimePickerFormat.Short;
             dateTimePickerServiceDateTime.Location = new Point(129, 119);
             dateTimePickerServiceDateTime.Name = "dateTimePickerServiceDateTime";
-            dateTimePickerServiceDateTime.Size = new Size(632, 23);
+            dateTimePickerServiceDateTime.Size = new Size(546, 23);
             dateTimePickerServiceDateTime.TabIndex = 10;
             dateTimePickerServiceDateTime.ValueChanged += dateTimePickerServiceDateTime_ValueChanged;
-            // 
+            //
+            // buttonShowSchedule
+            //
+            buttonShowSchedule.Anchor = AnchorStyles.Left;
+            buttonShowSchedule.Location = new Point(681, 120);
+            buttonShowSchedule.Name = "buttonShowSchedule";
+            buttonShowSchedule.Size = new Size(80, 23);
+            buttonShowSchedule.TabIndex = 11;
+            buttonShowSchedule.Text = "Расписание";
+            buttonShowSchedule.UseVisualStyleBackColor = true;
+            buttonShowSchedule.Click += buttonShowSchedule_Click;
+            //
             // comboBoxStatus
-            // 
+            //
             comboBoxStatus.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             comboBoxStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxStatus.FormattingEnabled = true;
@@ -300,6 +316,79 @@
             comboBoxStatus.Name = "comboBoxStatus";
             comboBoxStatus.Size = new Size(632, 23);
             comboBoxStatus.TabIndex = 11;
+            //
+            // tableLayoutPanelClient
+            //
+            tableLayoutPanelClient.ColumnCount = 2;
+            tableLayoutPanelClient.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelClient.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelClient.Controls.Add(comboBoxClient, 0, 0);
+            tableLayoutPanelClient.Controls.Add(buttonAddClient, 1, 0);
+            tableLayoutPanelClient.Dock = DockStyle.Fill;
+            tableLayoutPanelClient.Location = new Point(129, 33);
+            tableLayoutPanelClient.Name = "tableLayoutPanelClient";
+            tableLayoutPanelClient.RowCount = 1;
+            tableLayoutPanelClient.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelClient.Size = new Size(632, 23);
+            tableLayoutPanelClient.TabIndex = 12;
+            //
+            // comboBoxClient
+            //
+            comboBoxClient.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxClient.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxClient.FormattingEnabled = true;
+            comboBoxClient.Location = new Point(3, 3);
+            comboBoxClient.Name = "comboBoxClient";
+            comboBoxClient.Size = new Size(546, 23);
+            comboBoxClient.TabIndex = 7;
+            comboBoxClient.SelectedIndexChanged += comboBoxClient_SelectedIndexChanged;
+            //
+            // buttonAddClient
+            //
+            buttonAddClient.Anchor = AnchorStyles.Left;
+            buttonAddClient.Location = new Point(555, 3);
+            buttonAddClient.Name = "buttonAddClient";
+            buttonAddClient.Size = new Size(75, 23);
+            buttonAddClient.TabIndex = 8;
+            buttonAddClient.Text = "Добавить";
+            buttonAddClient.UseVisualStyleBackColor = true;
+            buttonAddClient.Click += buttonAddClient_Click;
+            //
+            // tableLayoutPanelCar
+            //
+            tableLayoutPanelCar.ColumnCount = 2;
+            tableLayoutPanelCar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelCar.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanelCar.Controls.Add(comboBoxCar, 0, 0);
+            tableLayoutPanelCar.Controls.Add(buttonAddCar, 1, 0);
+            tableLayoutPanelCar.Dock = DockStyle.Fill;
+            tableLayoutPanelCar.Location = new Point(129, 62);
+            tableLayoutPanelCar.Name = "tableLayoutPanelCar";
+            tableLayoutPanelCar.RowCount = 1;
+            tableLayoutPanelCar.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelCar.Size = new Size(632, 23);
+            tableLayoutPanelCar.TabIndex = 13;
+            //
+            // comboBoxCar
+            //
+            comboBoxCar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxCar.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxCar.FormattingEnabled = true;
+            comboBoxCar.Location = new Point(3, 3);
+            comboBoxCar.Name = "comboBoxCar";
+            comboBoxCar.Size = new Size(546, 23);
+            comboBoxCar.TabIndex = 9;
+            //
+            // buttonAddCar
+            //
+            buttonAddCar.Anchor = AnchorStyles.Left;
+            buttonAddCar.Location = new Point(555, 3);
+            buttonAddCar.Name = "buttonAddCar";
+            buttonAddCar.Size = new Size(75, 23);
+            buttonAddCar.TabIndex = 10;
+            buttonAddCar.Text = "Добавить";
+            buttonAddCar.UseVisualStyleBackColor = true;
+            buttonAddCar.Click += buttonAddCar_Click;
             // 
             // tabPageServices
             // 
@@ -557,7 +646,12 @@
         private ComboBox comboBoxCar;
         private ComboBox comboBoxMaster;
         private DateTimePicker dateTimePickerServiceDateTime;
+        private Button buttonShowSchedule;
         private ComboBox comboBoxStatus;
+        private TableLayoutPanel tableLayoutPanelClient;
+        private Button buttonAddClient;
+        private TableLayoutPanel tableLayoutPanelCar;
+        private Button buttonAddCar;
         private TabPage tabPageServices;
         private TableLayoutPanel tableLayoutPanelServices;
         private DataGridView dataGridViewServices;

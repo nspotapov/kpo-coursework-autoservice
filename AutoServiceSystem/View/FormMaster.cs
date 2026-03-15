@@ -89,9 +89,9 @@ namespace View
                 DateTime? birthDate = null;
                 if (dateTimePickerBirthDate.Checked && dateTimePickerBirthDate.Value != dateTimePickerBirthDate.MinDate)
                 {
-                    birthDate = dateTimePickerBirthDate.Value.Date.Kind == DateTimeKind.Utc 
-                        ? dateTimePickerBirthDate.Value.Date 
-                        : dateTimePickerBirthDate.Value.Date.ToUniversalTime();
+                    // Явно создаём DateTime с Kind=Utc для корректной работы с PostgreSQL
+                    var dateValue = dateTimePickerBirthDate.Value;
+                    birthDate = new DateTime(dateValue.Year, dateValue.Month, dateValue.Day, 0, 0, 0, DateTimeKind.Utc);
                 }
 
                 if (MasterId.HasValue)
@@ -107,7 +107,6 @@ namespace View
                         master.BirthDate = birthDate;
                         master.ExperienceYears = experience;
 
-                        _dbContext.Entry(master).State = EntityState.Modified;
                         await _dbContext.SaveChangesAsync();
                         MessageBox.Show("Мастер обновлен", "Успешно",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -123,12 +122,14 @@ namespace View
                         MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName,
                         Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
                         BirthDate = birthDate,
-                        ExperienceYears = experience
+                        ExperienceYears = experience,
+                        CreatedAt = DateTime.UtcNow,
+                        IsActive = true
                     };
 
                     _dbContext.Masters.Add(master);
                     await _dbContext.SaveChangesAsync();
-                    
+
                     MessageBox.Show("Мастер создан", "Успешно",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

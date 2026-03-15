@@ -119,6 +119,7 @@ public class UserRepository
     public async Task<List<User>> GetAllUsersAsync()
     {
         return await _context.Users
+            .AsNoTracking()
             .Where(u => u.IsActive)
             .OrderBy(u => u.LastName)
             .ToListAsync();

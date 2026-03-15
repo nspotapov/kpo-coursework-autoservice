@@ -2,6 +2,7 @@
 using Data.Models;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace View
 {
@@ -12,6 +13,7 @@ namespace View
 
         private readonly AutoserviceDbContext _dbContext;
         private readonly CarRepository _carRepository;
+        private readonly ClientRepository _clientRepository;
 
         public FormCar()
         {
@@ -23,19 +25,33 @@ namespace View
 
             _dbContext = new AutoserviceDbContext(optionsBuilder);
             _carRepository = new CarRepository(_dbContext);
-
-            InitializeComboBoxes();
+            _clientRepository = new ClientRepository(_dbContext);
         }
 
-        private async void InitializeComboBoxes()
+        /// <summary>
+        /// Конструктор для создания автомобиля с привязкой к клиенту
+        /// </summary>
+        public FormCar(Client client) : this()
         {
-            // Загружаем все автомобили для выбора (если нужно привязывать к клиенту)
-            // Но в этой форме просто создаем/редактируем автомобиль
-            // Привязка к клиенту будет в форме клиента
+            ClientId = client.Id;
+            Text = $"Создание автомобиля для клиента {client.FullName}";
+        }
+
+        private async Task InitializeComboBoxesAsync()
+        {
+            // Загружаем список клиентов для выбора
+            var clients = await _clientRepository.GetAllAsync();
+            comboBoxCarClient.DataSource = clients;
+            comboBoxCarClient.DisplayMember = "FullName";
+            comboBoxCarClient.ValueMember = "Id";
+            comboBoxCarClient.SelectedIndex = -1;
         }
 
         private async void FormCar_Load(object sender, EventArgs e)
         {
+            // Сначала инициализируем комбобокс
+            await InitializeComboBoxesAsync();
+            
             if (CarId.HasValue)
             {
                 Text = "Редактирование автомобиля";
@@ -55,14 +71,25 @@ namespace View
                 comboBoxCarBrand.Text = car.Brand;
                 comboBoxCarModel.Text = car.Model;
                 maskedTextBoxCarStateMark.Text = car.StateMark ?? string.Empty;
-                
+
                 if (car.ProductionYear.HasValue)
                 {
                     maskedTextBoxCarProductionYear.Text = car.ProductionYear.Value.ToString();
                 }
-                
+
                 comboBoxCarColor.Text = car.Color ?? string.Empty;
                 maskedTextBoxCarVinNumber.Text = car.VinNumber ?? string.Empty;
+
+                // Устанавливаем владельца только если DataSource уже установлен
+                if (car.OwnerId.HasValue && comboBoxCarClient.DataSource != null)
+                {
+                    // Проверяем, что клиент с таким ID есть в списке
+                    var clients = comboBoxCarClient.DataSource as List<Client>;
+                    if (clients != null && clients.Any(c => c.Id == car.OwnerId.Value))
+                    {
+                        comboBoxCarClient.SelectedValue = car.OwnerId.Value;
+                    }
+                }
             }
         }
 
@@ -74,17 +101,20 @@ namespace View
             var productionYearText = maskedTextBoxCarProductionYear.Text.Trim();
             var color = comboBoxCarColor.Text.Trim();
             var vinNumber = maskedTextBoxCarVinNumber.Text.Trim();
+            
+            // Получаем ClientId из комбобокса
+            int? ownerId = comboBoxCarClient.SelectedValue as int?;
 
             if (string.IsNullOrWhiteSpace(brand))
             {
-                MessageBox.Show("Введите марку автомобиля", "Ошибка", 
+                MessageBox.Show("Введите марку автомобиля", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(model))
             {
-                MessageBox.Show("Введите модель автомобиля", "Ошибка", 
+                MessageBox.Show("Введите модель автомобиля", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -109,9 +139,10 @@ namespace View
                         car.ProductionYear = productionYear;
                         car.Color = string.IsNullOrWhiteSpace(color) ? null : color;
                         car.VinNumber = string.IsNullOrWhiteSpace(vinNumber) ? null : vinNumber;
+                        car.OwnerId = ownerId;
 
                         await _carRepository.UpdateAsync(car);
-                        MessageBox.Show("Автомобиль обновлен", "Успешно", 
+                        MessageBox.Show("Автомобиль обновлен", "Успешно",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -120,7 +151,7 @@ namespace View
                     // Создание
                     var car = new Car
                     {
-                        OwnerId = ClientId,
+                        OwnerId = ownerId,
                         Brand = brand,
                         Model = model,
                         StateMark = string.IsNullOrWhiteSpace(stateMark) ? null : stateMark,
@@ -130,16 +161,23 @@ namespace View
                     };
 
                     await _carRepository.CreateAsync(car);
-                    MessageBox.Show("Автомобиль создан", "Успешно", 
+                    MessageBox.Show("Автомобиль создан", "Успешно",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 DialogResult = DialogResult.OK;
                 Close();
             }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx)
+            {
+                // Выводим внутреннюю ошибку БД
+                var innerError = dbEx.InnerException?.Message ?? dbEx.Message;
+                MessageBox.Show($"Ошибка базы данных: {innerError}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", 
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

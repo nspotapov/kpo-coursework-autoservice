@@ -39,7 +39,6 @@ namespace View
             _partRepository = new PartRepository(_dbContext);
 
             InitializeDataGridViews();
-            InitializeComboBoxes();
         }
 
         private void InitializeDataGridViews()
@@ -63,7 +62,7 @@ namespace View
             dataGridViewParts.Columns["Id"].Visible = false;
         }
 
-        private async void InitializeComboBoxes()
+        private async Task InitializeComboBoxesAsync()
         {
             _allClients = await _clientRepository.GetAllAsync();
             _allServices = await _serviceRepository.GetAllAsync();
@@ -75,7 +74,7 @@ namespace View
             comboBoxClient.SelectedIndex = -1;
 
             comboBoxStatus.SelectedIndex = 0; // По умолчанию "Ожидает"
-            
+
             // Загружаем мастеров
             var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
             comboBoxMaster.DataSource = masters;
@@ -86,6 +85,9 @@ namespace View
 
         private async void FormOrder_Load(object sender, EventArgs e)
         {
+            // Сначала инициализируем комбобоксы
+            await InitializeComboBoxesAsync();
+            
             await GenerateOrderNumberAsync();
 
             if (OrderId.HasValue)
@@ -175,9 +177,9 @@ namespace View
 
         private void comboBoxClient_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxClient.SelectedValue != null)
+            // Проверяем, что выбрано корректное значение (int, а не объект Client)
+            if (comboBoxClient.SelectedValue is int clientId && clientId > 0)
             {
-                var clientId = Convert.ToInt32(comboBoxClient.SelectedValue);
                 _ = LoadCarsForClient(clientId);
             }
         }
@@ -185,6 +187,34 @@ namespace View
         private void dateTimePickerServiceDateTime_ValueChanged(object sender, EventArgs e)
         {
             // Можно добавить проверку доступности мастера
+        }
+
+        private async void buttonShowSchedule_Click(object sender, EventArgs e)
+        {
+            // Получаем выбранную дату
+            var selectedDate = dateTimePickerServiceDateTime.Value.Date;
+
+            // Загружаем активных мастеров
+            var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
+
+            if (masters.Count == 0)
+            {
+                MessageBox.Show("Нет доступных мастеров.", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Показываем форму расписания
+            var scheduleForm = new FormMasterSchedule(masters, selectedDate);
+            if (scheduleForm.ShowDialog() == DialogResult.OK)
+            {
+                if (scheduleForm.SelectedMaster != null && scheduleForm.SelectedDateTime.HasValue)
+                {
+                    // Устанавливаем выбранного мастера и время
+                    comboBoxMaster.SelectedValue = scheduleForm.SelectedMaster.Id;
+                    dateTimePickerServiceDateTime.Value = scheduleForm.SelectedDateTime.Value;
+                }
+            }
         }
 
         private async void buttonAddService_Click(object sender, EventArgs e)
@@ -369,7 +399,8 @@ namespace View
                 };
 
                 var masterId = Convert.ToInt32(comboBoxMaster.SelectedValue);
-                var serviceDateTime = dateTimePickerServiceDateTime.Value.ToUniversalTime();
+                // Явно указываем DateTimeKind.Utc для корректной работы с PostgreSQL
+                var serviceDateTime = DateTime.SpecifyKind(dateTimePickerServiceDateTime.Value, DateTimeKind.Utc);
 
                 if (OrderId.HasValue)
                 {
@@ -457,6 +488,62 @@ namespace View
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private async void buttonAddClient_Click(object sender, EventArgs e)
+        {
+            // Открываем форму добавления клиента
+            var formClient = new FormClient();
+            if (formClient.ShowDialog() == DialogResult.OK)
+            {
+                // Обновляем список клиентов
+                _allClients = await _clientRepository.GetAllAsync();
+                comboBoxClient.DataSource = null;
+                comboBoxClient.DisplayMember = "FullName";
+                comboBoxClient.ValueMember = "Id";
+                comboBoxClient.DataSource = _allClients;
+                comboBoxClient.SelectedIndex = -1;
+
+                // Выбираем newly созданного клиента
+                if (formClient.ClientId.HasValue)
+                {
+                    comboBoxClient.SelectedValue = formClient.ClientId.Value;
+                }
+            }
+        }
+
+        private async void buttonAddCar_Click(object sender, EventArgs e)
+        {
+            if (comboBoxClient.SelectedValue == null)
+            {
+                MessageBox.Show("Сначала выберите клиента", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var clientId = Convert.ToInt32(comboBoxClient.SelectedValue);
+            var client = _allClients.FirstOrDefault(c => c.Id == clientId);
+
+            if (client == null)
+            {
+                MessageBox.Show("Клиент не найден", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Открываем форму добавления автомобиля с предвыбранным клиентом
+            var formCar = new FormCar(client);
+            if (formCar.ShowDialog() == DialogResult.OK)
+            {
+                // Обновляем список автомобилей
+                await LoadCarsForClient(clientId);
+                
+                // Выбираем newly созданный автомобиль
+                if (formCar.CarId.HasValue)
+                {
+                    comboBoxCar.SelectedValue = formCar.CarId.Value;
+                }
+            }
         }
     }
 }
