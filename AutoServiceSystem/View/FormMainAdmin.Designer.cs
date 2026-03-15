@@ -1,6 +1,6 @@
 ﻿namespace View
 {
-    partial class FormMain
+    partial class FormMainAdmin
     {
         /// <summary>
         /// Required designer variable.
@@ -35,6 +35,12 @@
             AboutProgramToolStripMenuItem = new ToolStripMenuItem();
             SystemToolStripMenuItem = new ToolStripMenuItem();
             SystemUsersToolStripMenuItem = new ToolStripMenuItem();
+            LogoutToolStripMenuItem = new ToolStripMenuItem();
+            ReferenceToolStripMenuItem = new ToolStripMenuItem();
+            ReferenceServicesToolStripMenuItem = new ToolStripMenuItem();
+            ReferencePartsToolStripMenuItem = new ToolStripMenuItem();
+            MastersToolStripMenuItem = new ToolStripMenuItem();
+            ChecksToolStripMenuItem = new ToolStripMenuItem();
             ItemToolStripMenuItem = new ToolStripMenuItem();
             CreateItemToolStripMenuItem = new ToolStripMenuItem();
             EditItemToolStripMenuItem = new ToolStripMenuItem();
@@ -111,10 +117,10 @@
             toolStripStatusLabel.Name = "toolStripStatusLabel";
             toolStripStatusLabel.Size = new Size(112, 17);
             toolStripStatusLabel.Text = "toolStripStatusLabel";
-            // 
+            //
             // menuStrip
-            // 
-            menuStrip.Items.AddRange(new ToolStripItem[] { InfoToolStripMenuItem, SystemToolStripMenuItem, ItemToolStripMenuItem });
+            //
+            menuStrip.Items.AddRange(new ToolStripItem[] { InfoToolStripMenuItem, SystemToolStripMenuItem, ReferenceToolStripMenuItem, ChecksToolStripMenuItem, ItemToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1293, 24);
@@ -134,21 +140,63 @@
             AboutProgramToolStripMenuItem.Size = new Size(149, 22);
             AboutProgramToolStripMenuItem.Text = "О программе";
             AboutProgramToolStripMenuItem.Click += AboutProgramToolStripMenuItem_Click;
-            // 
+            //
             // SystemToolStripMenuItem
-            // 
-            SystemToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { SystemUsersToolStripMenuItem });
+            //
+            SystemToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { SystemUsersToolStripMenuItem, LogoutToolStripMenuItem });
             SystemToolStripMenuItem.Name = "SystemToolStripMenuItem";
             SystemToolStripMenuItem.Size = new Size(66, 20);
             SystemToolStripMenuItem.Text = "Система";
-            // 
+            //
             // SystemUsersToolStripMenuItem
-            // 
+            //
             SystemUsersToolStripMenuItem.Name = "SystemUsersToolStripMenuItem";
             SystemUsersToolStripMenuItem.Size = new Size(152, 22);
             SystemUsersToolStripMenuItem.Text = "Пользователи";
             SystemUsersToolStripMenuItem.Click += SystemUsersToolStripMenuItem_Click;
-            // 
+            //
+            // LogoutToolStripMenuItem
+            //
+            LogoutToolStripMenuItem.Name = "LogoutToolStripMenuItem";
+            LogoutToolStripMenuItem.Size = new Size(152, 22);
+            LogoutToolStripMenuItem.Text = "Выйти";
+            LogoutToolStripMenuItem.Click += LogoutToolStripMenuItem_Click;
+            //
+            // ReferenceToolStripMenuItem
+            //
+            ReferenceToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ReferenceServicesToolStripMenuItem, ReferencePartsToolStripMenuItem, MastersToolStripMenuItem });
+            ReferenceToolStripMenuItem.Name = "ReferenceToolStripMenuItem";
+            ReferenceToolStripMenuItem.Size = new Size(89, 20);
+            ReferenceToolStripMenuItem.Text = "Справочники";
+            //
+            // ReferenceServicesToolStripMenuItem
+            //
+            ReferenceServicesToolStripMenuItem.Name = "ReferenceServicesToolStripMenuItem";
+            ReferenceServicesToolStripMenuItem.Size = new Size(152, 22);
+            ReferenceServicesToolStripMenuItem.Text = "Услуги";
+            ReferenceServicesToolStripMenuItem.Click += ReferenceServicesToolStripMenuItem_Click;
+            //
+            // ReferencePartsToolStripMenuItem
+            //
+            ReferencePartsToolStripMenuItem.Name = "ReferencePartsToolStripMenuItem";
+            ReferencePartsToolStripMenuItem.Size = new Size(152, 22);
+            ReferencePartsToolStripMenuItem.Text = "Запчасти";
+            ReferencePartsToolStripMenuItem.Click += ReferencePartsToolStripMenuItem_Click;
+            //
+            // MastersToolStripMenuItem
+            //
+            MastersToolStripMenuItem.Name = "MastersToolStripMenuItem";
+            MastersToolStripMenuItem.Size = new Size(152, 22);
+            MastersToolStripMenuItem.Text = "Мастера";
+            MastersToolStripMenuItem.Click += MastersToolStripMenuItem_Click;
+            //
+            // ChecksToolStripMenuItem
+            //
+            ChecksToolStripMenuItem.Name = "ChecksToolStripMenuItem";
+            ChecksToolStripMenuItem.Size = new Size(56, 20);
+            ChecksToolStripMenuItem.Text = "Чеки";
+            ChecksToolStripMenuItem.Click += ChecksToolStripMenuItem_Click;
+            //
             // ItemToolStripMenuItem
             // 
             ItemToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { CreateItemToolStripMenuItem, EditItemToolStripMenuItem });
@@ -297,7 +345,7 @@
             tableLayoutPanelOrdersFilter.Location = new Point(3, 3);
             tableLayoutPanelOrdersFilter.Name = "tableLayoutPanelOrdersFilter";
             tableLayoutPanelOrdersFilter.RowCount = 1;
-            tableLayoutPanelOrdersFilter.RowStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelOrdersFilter.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelOrdersFilter.Size = new Size(1273, 29);
             tableLayoutPanelOrdersFilter.TabIndex = 3;
             // 
@@ -687,5 +735,11 @@
         private DataGridViewTextBoxColumn ColumnClientId;
         private DataGridViewTextBoxColumn ColumnClientType;
         private DataGridViewTextBoxColumn ColumnClientContactInfo;
+        private ToolStripMenuItem ReferenceToolStripMenuItem;
+        private ToolStripMenuItem ReferenceServicesToolStripMenuItem;
+        private ToolStripMenuItem ReferencePartsToolStripMenuItem;
+        private ToolStripMenuItem MastersToolStripMenuItem;
+        private ToolStripMenuItem ChecksToolStripMenuItem;
+        private ToolStripMenuItem LogoutToolStripMenuItem;
     }
 }

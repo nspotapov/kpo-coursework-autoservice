@@ -1,3 +1,5 @@
+using Data;
+
 namespace View
 {
     internal static class Program
@@ -8,15 +10,15 @@ namespace View
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
 
-            FormAuth formAuth = new FormAuth();
-
-            if (formAuth.ShowDialog() == DialogResult.OK)
+            var authForm = new FormAuth();
+            
+            if (authForm.ShowDialog() == DialogResult.OK && CurrentUser.IsAuthenticated)
             {
-                Application.Run(new FormMain());
+                // Открываем главную форму с разграничением прав
+                Application.Run(new FormMainAdmin());
             }
         }
     }
