@@ -43,6 +43,8 @@
             labelCar = new Label();
             labelMaster = new Label();
             labelServiceDateTime = new Label();
+            labelServiceDate = new Label();
+            labelServiceTime = new Label();
             textBoxOrderNumber = new TextBox();
             comboBoxClient = new ComboBox();
             comboBoxCar = new ComboBox();
@@ -195,20 +197,23 @@
             // 
             // tableLayoutPanelMain
             // 
-            tableLayoutPanelMain.ColumnCount = 2;
+            tableLayoutPanelMain.ColumnCount = 3;
             tableLayoutPanelMain.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanelMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelMain.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanelMain.Controls.Add(labelOrderNumber, 0, 0);
             tableLayoutPanelMain.Controls.Add(labelClient, 0, 1);
             tableLayoutPanelMain.Controls.Add(labelCar, 0, 2);
             tableLayoutPanelMain.Controls.Add(labelMaster, 0, 3);
-            tableLayoutPanelMain.Controls.Add(labelServiceDateTime, 0, 4);
+            tableLayoutPanelMain.Controls.Add(labelServiceDate, 0, 4);
+            tableLayoutPanelMain.Controls.Add(labelServiceTime, 0, 5);
             tableLayoutPanelMain.Controls.Add(textBoxOrderNumber, 1, 0);
             tableLayoutPanelMain.Controls.Add(tableLayoutPanelClient, 1, 1);
             tableLayoutPanelMain.Controls.Add(tableLayoutPanelCar, 1, 2);
             tableLayoutPanelMain.Controls.Add(comboBoxMaster, 1, 3);
             tableLayoutPanelMain.Controls.Add(dateTimePickerServiceDate, 1, 4);
             tableLayoutPanelMain.Controls.Add(dateTimePickerServiceTime, 1, 5);
+            tableLayoutPanelMain.Controls.Add(buttonShowSchedule, 2, 5);
             tableLayoutPanelMain.Dock = DockStyle.Fill;
             tableLayoutPanelMain.Location = new Point(3, 3);
             tableLayoutPanelMain.Name = "tableLayoutPanelMain";
@@ -271,6 +276,26 @@
             labelServiceDateTime.Size = new Size(120, 15);
             labelServiceDateTime.TabIndex = 4;
             labelServiceDateTime.Text = "Дата и время услуги";
+            //
+            // labelServiceDate
+            //
+            labelServiceDate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            labelServiceDate.AutoSize = true;
+            labelServiceDate.Location = new Point(3, 94);
+            labelServiceDate.Name = "labelServiceDate";
+            labelServiceDate.Size = new Size(120, 15);
+            labelServiceDate.TabIndex = 13;
+            labelServiceDate.Text = "Дата услуги *";
+            //
+            // labelServiceTime
+            //
+            labelServiceTime.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            labelServiceTime.AutoSize = true;
+            labelServiceTime.Location = new Point(3, 123);
+            labelServiceTime.Name = "labelServiceTime";
+            labelServiceTime.Size = new Size(120, 15);
+            labelServiceTime.TabIndex = 14;
+            labelServiceTime.Text = "Время начала *";
             //
             // textBoxOrderNumber
             //
@@ -336,11 +361,11 @@
             // buttonShowSchedule
             //
             buttonShowSchedule.Anchor = AnchorStyles.Left;
-            buttonShowSchedule.Location = new Point(561, 120);
+            buttonShowSchedule.Location = new Point(561, 119);
             buttonShowSchedule.Name = "buttonShowSchedule";
             buttonShowSchedule.Size = new Size(100, 23);
-            buttonShowSchedule.TabIndex = 12;
-            buttonShowSchedule.Text = "Расписание";
+            buttonShowSchedule.TabIndex = 15;
+            buttonShowSchedule.Text = "📅 Расписание";
             buttonShowSchedule.UseVisualStyleBackColor = true;
             buttonShowSchedule.Click += buttonShowSchedule_Click;
             //
@@ -670,6 +695,8 @@
         private Label labelCar;
         private Label labelMaster;
         private Label labelServiceDateTime;
+        private Label labelServiceDate;
+        private Label labelServiceTime;
         private TextBox textBoxOrderNumber;
         private ComboBox comboBoxClient;
         private ComboBox comboBoxCar;

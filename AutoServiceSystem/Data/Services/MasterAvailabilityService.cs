@@ -42,16 +42,28 @@ namespace Data.Services
         /// <summary>
         /// Получить занятые слоты мастера на дату
         /// </summary>
-        public async Task<List<MasterBusySlot>> GetMasterBusySlotsAsync(int masterId, DateTime date)
+        /// <param name="masterId">ID мастера</param>
+        /// <param name="date">Дата</param>
+        /// <param name="excludeOrderId">ID заявки, которую нужно исключить (для редактирования)</param>
+        public async Task<List<MasterBusySlot>> GetMasterBusySlotsAsync(int masterId, DateTime date, int? excludeOrderId = null)
         {
-            var dateStart = date.Date;
-            var dateEnd = date.Date.AddDays(1);
+            // Конвертируем дату в UTC для корректной работы с PostgreSQL
+            var dateStart = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
+            var dateEnd = dateStart.AddDays(1);
 
-            var orders = await _dbContext.Orders
+            var query = _dbContext.Orders
                 .Where(o => o.MasterId == masterId
                          && o.ServiceDateTime >= dateStart
                          && o.ServiceDateTime < dateEnd
-                         && o.Status != OrderStatus.Cancelled)
+                         && o.Status != OrderStatus.Cancelled);
+
+            // Исключаем текущую заявку при редактировании
+            if (excludeOrderId.HasValue)
+            {
+                query = query.Where(o => o.Id != excludeOrderId.Value);
+            }
+
+            var orders = await query
                 .Include(o => o.Client)
                 .Include(o => o.Car)
                 .Include(o => o.OrderServices)
@@ -85,10 +97,14 @@ namespace Data.Services
         /// <summary>
         /// Проверить, доступен ли мастер в указанное время с учётом всех заявок
         /// </summary>
-        public async Task<bool> IsMasterAvailableAtAsync(int masterId, DateTime dateTime, int durationMinutes)
+        /// <param name="masterId">ID мастера</param>
+        /// <param name="dateTime">Дата и время</param>
+        /// <param name="durationMinutes">Длительность в минутах</param>
+        /// <param name="excludeOrderId">ID заявки, которую нужно исключить из проверки (для редактирования)</param>
+        public async Task<bool> IsMasterAvailableAtAsync(int masterId, DateTime dateTime, int durationMinutes, int? excludeOrderId = null)
         {
             var date = dateTime.Date;
-            var busySlots = await GetMasterBusySlotsAsync(masterId, date);
+            var busySlots = await GetMasterBusySlotsAsync(masterId, date, excludeOrderId);
             
             return IsMasterAvailable(busySlots, dateTime, durationMinutes);
         }

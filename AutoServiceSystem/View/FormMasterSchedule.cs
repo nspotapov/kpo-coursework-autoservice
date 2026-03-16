@@ -20,7 +20,8 @@ namespace View
             InitializeComponent();
 
             _masters = masters;
-            _selectedDate = selectedDate.Date;
+            // Конвертируем дату в UTC для корректной работы с PostgreSQL
+            _selectedDate = DateTime.SpecifyKind(selectedDate.Date, DateTimeKind.Utc);
 
             var optionsBuilder = new DbContextOptionsBuilder<AutoserviceDbContext>()
                 .UseNpgsql(Settings.DBConfig.ConnectionString)
@@ -63,6 +64,7 @@ namespace View
             dataGridViewSchedule.Rows.Clear();
 
             // Генерируем временные слоты с 8:00 до 20:00 с шагом 30 минут
+            // Используем локальное время для отображения
             var currentTime = _selectedDate.Date + AppConstants.WorkDayStart;
             var endTime = _selectedDate.Date + AppConstants.WorkDayEnd;
 
@@ -76,8 +78,9 @@ namespace View
                 for (int i = 0; i < _masters.Count; i++)
                 {
                     var master = _masters[i];
+                    // Проверяем слот 30 минут
                     var isAvailable = await _availabilityService.IsMasterAvailableAtAsync(
-                        master.Id, currentTime, 30); // Проверяем слот 30 минут
+                        master.Id, currentTime, 30);
 
                     var cell = row.Cells[i + 1];
 

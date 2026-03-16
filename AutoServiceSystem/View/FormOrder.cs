@@ -191,8 +191,8 @@ namespace View
 
         private async void buttonShowSchedule_Click(object sender, EventArgs e)
         {
-            // Получаем выбранную дату
-            var selectedDate = dateTimePickerServiceDate.Value.Date;
+            // Получаем выбранную дату (конвертируем в UTC)
+            var selectedDate = DateTime.SpecifyKind(dateTimePickerServiceDate.Value.Date, DateTimeKind.Utc);
 
             // Загружаем активных мастеров
             var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
@@ -380,9 +380,17 @@ namespace View
 
             if (comboBoxMaster.SelectedValue == null)
             {
-                MessageBox.Show("Выберите мастера", "Ошибка", 
+                MessageBox.Show("Выберите мастера", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tabControl.SelectedIndex = 0;
+                return;
+            }
+
+            if (_selectedServices.Count == 0)
+            {
+                MessageBox.Show("Добавьте хотя бы одну услугу", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tabControl.SelectedIndex = 1;
                 return;
             }
 
@@ -398,10 +406,10 @@ namespace View
                 // Явно указываем DateTimeKind.Utc для корректной работы с PostgreSQL
                 serviceDateTime = DateTime.SpecifyKind(serviceDateTime, DateTimeKind.Utc);
 
-                // Проверяем доступность мастера
+                // Проверяем доступность мастера (только для новой заявки или если изменилось время)
                 var totalDuration = _selectedServices.Sum(s => s.Service.DurationMinutes);
                 var isAvailable = await _availabilityService.IsMasterAvailableAtAsync(
-                    masterId, serviceDateTime, totalDuration);
+                    masterId, serviceDateTime, totalDuration, OrderId);
 
                 if (!isAvailable)
                 {
@@ -419,32 +427,49 @@ namespace View
                 if (OrderId.HasValue)
                 {
                     // Редактирование
-                    var order = await _orderRepository.GetByIdAsync(OrderId.Value);
+                    var order = await _dbContext.Orders
+                        .Include(o => o.OrderServices)
+                        .Include(o => o.OrderParts)
+                        .FirstOrDefaultAsync(o => o.Id == OrderId.Value);
+                        
                     if (order != null)
                     {
                         order.ClientId = Convert.ToInt32(comboBoxClient.SelectedValue);
                         order.CarId = Convert.ToInt32(comboBoxCar.SelectedValue);
                         order.MasterId = masterId;
                         order.ServiceDateTime = serviceDateTime;
-                        order.Status = OrderStatus.Pending; // По умолчанию "Ожидает"
+                        order.UpdatedAt = DateTime.UtcNow;
+                        // Статус не меняем при редактировании
 
                         // Обновляем услуги и запчасти
                         _dbContext.OrderServices.RemoveRange(order.OrderServices);
                         _dbContext.OrderParts.RemoveRange(order.OrderParts);
-                        
+
+                        // Создаём новые записи услуг с Id = 0 (чтобы EF понял, что это новые записи)
                         foreach (var os in _selectedServices)
                         {
-                            os.OrderId = order.Id;
-                            _dbContext.OrderServices.Add(os);
-                        }
-                        
-                        foreach (var op in _selectedParts)
-                        {
-                            op.OrderId = order.Id;
-                            _dbContext.OrderParts.Add(op);
+                            _dbContext.OrderServices.Add(new OrderService
+                            {
+                                OrderId = order.Id,
+                                ServiceId = os.ServiceId,
+                                Quantity = os.Quantity,
+                                Price = os.Price
+                            });
                         }
 
-                        order.TotalPrice = _selectedServices.Sum(s => s.Price * s.Quantity) + 
+                        // Создаём новые записи запчастей с Id = 0
+                        foreach (var op in _selectedParts)
+                        {
+                            _dbContext.OrderParts.Add(new OrderPart
+                            {
+                                OrderId = order.Id,
+                                PartId = op.PartId,
+                                Quantity = op.Quantity,
+                                Price = op.Price
+                            });
+                        }
+
+                        order.TotalPrice = _selectedServices.Sum(s => s.Price * s.Quantity) +
                                           _selectedParts.Sum(p => p.Price * p.Quantity);
 
                         await _dbContext.SaveChangesAsync();
@@ -473,30 +498,66 @@ namespace View
 
                     await _orderRepository.CreateAsync(order);
 
-                    // Добавляем услуги и запчасти
+                    // Добавляем услуги и запчасти (создаём новые записи)
                     foreach (var os in _selectedServices)
                     {
-                        os.OrderId = order.Id;
-                        _dbContext.OrderServices.Add(os);
+                        _dbContext.OrderServices.Add(new OrderService
+                        {
+                            OrderId = order.Id,
+                            ServiceId = os.ServiceId,
+                            Quantity = os.Quantity,
+                            Price = os.Price
+                        });
                     }
 
                     foreach (var op in _selectedParts)
                     {
-                        op.OrderId = order.Id;
-                        _dbContext.OrderParts.Add(op);
+                        _dbContext.OrderParts.Add(new OrderPart
+                        {
+                            OrderId = order.Id,
+                            PartId = op.PartId,
+                            Quantity = op.Quantity,
+                            Price = op.Price
+                        });
                     }
 
                     await _dbContext.SaveChangesAsync();
-                    MessageBox.Show("Заявка создана", "Успешно", 
+                    MessageBox.Show("Заявка создана", "Успешно",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 DialogResult = DialogResult.OK;
                 Close();
             }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx)
+            {
+                // Подробная ошибка базы данных
+                var errorMsg = $"Ошибка базы данных: {dbEx.Message}\n\n";
+                if (dbEx.InnerException != null)
+                {
+                    errorMsg += $"Внутренняя ошибка: {dbEx.InnerException.Message}\n\n";
+                    if (dbEx.InnerException.InnerException != null)
+                    {
+                        errorMsg += $"Детали: {dbEx.InnerException.InnerException.Message}";
+                    }
+                }
+                
+                MessageBox.Show(errorMsg, "Ошибка при сохранении",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", 
+                var errorMsg = $"Ошибка: {ex.Message}\n\n";
+                if (ex.InnerException != null)
+                {
+                    errorMsg += $"Внутренняя ошибка: {ex.InnerException.Message}\n\n";
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        errorMsg += $"Детали: {ex.InnerException.InnerException.Message}";
+                    }
+                }
+                
+                MessageBox.Show(errorMsg, "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
