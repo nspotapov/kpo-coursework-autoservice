@@ -410,6 +410,23 @@ namespace View
                 return;
             }
 
+            // Проверяем, что дата и время не в прошлом
+            var now = DateTime.Now;
+            var serviceDateTimeLocal = dateTimePickerServiceDate.Value.Date + dateTimePickerServiceTime.Value.TimeOfDay;
+            
+            if (serviceDateTimeLocal < now.AddMinutes(5)) // Даём небольшой буфер 5 минут
+            {
+                MessageBox.Show(
+                    $"Нельзя создать заявку на прошедшее время!\n\n" +
+                    $"Выбранное время: {serviceDateTimeLocal:dd.MM.yyyy HH:mm}\n" +
+                    $"Текущее время: {now:dd.MM.yyyy HH:mm}\n\n" +
+                    $"Пожалуйста, выберите дату и время в будущем.",
+                    "Некорректное время",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
                 var masterId = Convert.ToInt32(comboBoxMaster.SelectedValue);
