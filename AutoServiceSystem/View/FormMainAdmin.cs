@@ -213,7 +213,8 @@ namespace View
                     }
                 }
 
-                if (form.ShowDialog() == DialogResult.OK)
+                var dialogResult = form.ShowDialog();
+                if (dialogResult == DialogResult.OK)
                 {
                     await LoadOrdersAsync();
                 }
@@ -234,7 +235,8 @@ namespace View
                     }
                 }
 
-                if (form.ShowDialog() == DialogResult.OK)
+                var dialogResult = form.ShowDialog();
+                if (dialogResult == DialogResult.OK)
                 {
                     await LoadCarsAsync();
                 }
@@ -255,7 +257,8 @@ namespace View
                     }
                 }
 
-                if (form.ShowDialog() == DialogResult.OK)
+                var dialogResult = form.ShowDialog();
+                if (dialogResult == DialogResult.OK)
                 {
                     await LoadClientsAsync();
                 }
@@ -270,6 +273,163 @@ namespace View
         private async void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             await ShowCreateOrEditDialog(isEditDialog: true);
+        }
+
+        /// <summary>
+        /// Открытие записи по двойному клику
+        /// </summary>
+        private async void dataGridViewOrders_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                await ShowCreateOrEditDialog(isEditDialog: true);
+            }
+        }
+
+        private async void dataGridViewCars_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                await ShowCreateOrEditDialog(isEditDialog: true);
+            }
+        }
+
+        private async void dataGridViewClients_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                await ShowCreateOrEditDialog(isEditDialog: true);
+            }
+        }
+
+        /// <summary>
+        /// Удаление записи по Delete
+        /// </summary>
+        private async void dataGridViewOrders_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && dataGridViewOrders.SelectedRows.Count > 0)
+            {
+                e.SuppressKeyPress = true;
+                await DeleteSelectedOrderAsync();
+            }
+        }
+
+        private async void dataGridViewCars_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && dataGridViewCars.SelectedRows.Count > 0)
+            {
+                e.SuppressKeyPress = true;
+                await DeleteSelectedCarAsync();
+            }
+        }
+
+        private async void dataGridViewClients_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && dataGridViewClients.SelectedRows.Count > 0)
+            {
+                e.SuppressKeyPress = true;
+                await DeleteSelectedClientAsync();
+            }
+        }
+
+        private async Task DeleteSelectedOrderAsync()
+        {
+            if (dataGridViewOrders.SelectedRows.Count == 1)
+            {
+                var orderId = Convert.ToInt32(dataGridViewOrders.SelectedRows[0].Cells["ColumnOrderId"].Value);
+                var orderNumber = dataGridViewOrders.SelectedRows[0].Cells["ColumnOrderNumber"].Value.ToString();
+
+                // Проверяем, есть ли чек для этой заявки
+                var existingCheck = await _dbContext.Checks
+                    .FirstOrDefaultAsync(c => c.OrderId == orderId);
+
+                if (existingCheck != null)
+                {
+                    MessageBox.Show(
+                        $"Нельзя удалить заявку \"{orderNumber}\", так как для неё уже создан чек.\n\n" +
+                        $"Сначала удалите чек.",
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var result = MessageBox.Show($"Удалить заявку \"{orderNumber}\"?", "Подтверждение",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Создаём НОВЫЙ контекст для удаления, чтобы избежать конфликтов отслеживания
+                    var deleteContext = new AutoserviceDbContext(
+                        new DbContextOptionsBuilder<AutoserviceDbContext>()
+                            .UseNpgsql(Settings.DBConfig.ConnectionString)
+                            .Options);
+
+                    var order = await deleteContext.Orders.FindAsync(orderId);
+                    if (order != null)
+                    {
+                        deleteContext.Orders.Remove(order);
+                        await deleteContext.SaveChangesAsync();
+                        await LoadOrdersAsync();
+                    }
+                }
+            }
+        }
+
+        private async Task DeleteSelectedCarAsync()
+        {
+            if (dataGridViewCars.SelectedRows.Count == 1)
+            {
+                var carId = Convert.ToInt32(dataGridViewCars.SelectedRows[0].Cells["ColumnCarId"].Value);
+                var carInfo = dataGridViewCars.SelectedRows[0].Cells["ColumnCarStateMark"].Value.ToString();
+
+                var result = MessageBox.Show($"Удалить автомобиль \"{carInfo}\"?", "Подтверждение",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    var deleteContext = new AutoserviceDbContext(
+                        new DbContextOptionsBuilder<AutoserviceDbContext>()
+                            .UseNpgsql(Settings.DBConfig.ConnectionString)
+                            .Options);
+
+                    var car = await deleteContext.Cars.FindAsync(carId);
+                    if (car != null)
+                    {
+                        deleteContext.Cars.Remove(car);
+                        await deleteContext.SaveChangesAsync();
+                        await LoadCarsAsync();
+                    }
+                }
+            }
+        }
+
+        private async Task DeleteSelectedClientAsync()
+        {
+            if (dataGridViewClients.SelectedRows.Count == 1)
+            {
+                var clientId = Convert.ToInt32(dataGridViewClients.SelectedRows[0].Cells["ColumnClientId"].Value);
+                var clientName = dataGridViewClients.SelectedRows[0].Cells["ColumnClientContactInfo"].Value.ToString();
+
+                var result = MessageBox.Show($"Удалить клиента \"{clientName}\"?", "Подтверждение",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    var deleteContext = new AutoserviceDbContext(
+                        new DbContextOptionsBuilder<AutoserviceDbContext>()
+                            .UseNpgsql(Settings.DBConfig.ConnectionString)
+                            .Options);
+
+                    var client = await deleteContext.Clients.FindAsync(clientId);
+                    if (client != null)
+                    {
+                        deleteContext.Clients.Remove(client);
+                        await deleteContext.SaveChangesAsync();
+                        await LoadClientsAsync();
+                    }
+                }
+            }
         }
 
         private void dateTimePickerOrderFilterDateFrom_ValueChanged(object sender, EventArgs e)

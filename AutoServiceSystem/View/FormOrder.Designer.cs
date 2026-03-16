@@ -30,6 +30,9 @@
         {
             buttonAccept = new Button();
             buttonCancel = new Button();
+            buttonCancelOrder = new Button();
+            buttonStartExecution = new Button();
+            buttonCreateCheck = new Button();
             tableLayoutPanelWrapper = new TableLayoutPanel();
             flowLayoutPanelFormControl = new FlowLayoutPanel();
             tabControl = new TabControl();
@@ -40,14 +43,13 @@
             labelCar = new Label();
             labelMaster = new Label();
             labelServiceDateTime = new Label();
-            labelStatus = new Label();
             textBoxOrderNumber = new TextBox();
             comboBoxClient = new ComboBox();
             comboBoxCar = new ComboBox();
             comboBoxMaster = new ComboBox();
-            dateTimePickerServiceDateTime = new DateTimePicker();
+            dateTimePickerServiceDate = new DateTimePicker();
+            dateTimePickerServiceTime = new DateTimePicker();
             buttonShowSchedule = new Button();
-            comboBoxStatus = new ComboBox();
             tableLayoutPanelClient = new TableLayoutPanel();
             buttonAddClient = new Button();
             tableLayoutPanelCar = new TableLayoutPanel();
@@ -92,9 +94,9 @@
             buttonAccept.Text = "Сохранить";
             buttonAccept.UseVisualStyleBackColor = true;
             buttonAccept.Click += buttonAccept_Click;
-            // 
+            //
             // buttonCancel
-            // 
+            //
             buttonCancel.Location = new Point(645, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(75, 23);
@@ -102,9 +104,42 @@
             buttonCancel.Text = "Закрыть";
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
-            // 
+            //
+            // buttonCancelOrder
+            //
+            buttonCancelOrder.Location = new Point(420, 3);
+            buttonCancelOrder.Name = "buttonCancelOrder";
+            buttonCancelOrder.Size = new Size(110, 23);
+            buttonCancelOrder.TabIndex = 2;
+            buttonCancelOrder.Text = "❌ Отменить";
+            buttonCancelOrder.UseVisualStyleBackColor = true;
+            buttonCancelOrder.BackColor = Color.LightCoral;
+            buttonCancelOrder.Click += buttonCancelOrder_Click;
+            //
+            // buttonStartExecution
+            //
+            buttonStartExecution.Location = new Point(290, 3);
+            buttonStartExecution.Name = "buttonStartExecution";
+            buttonStartExecution.Size = new Size(125, 23);
+            buttonStartExecution.TabIndex = 3;
+            buttonStartExecution.Text = "▶ Начать выполнение";
+            buttonStartExecution.UseVisualStyleBackColor = true;
+            buttonStartExecution.BackColor = Color.LightGreen;
+            buttonStartExecution.Click += buttonStartExecution_Click;
+            //
+            // buttonCreateCheck
+            //
+            buttonCreateCheck.Location = new Point(150, 3);
+            buttonCreateCheck.Name = "buttonCreateCheck";
+            buttonCreateCheck.Size = new Size(135, 23);
+            buttonCreateCheck.TabIndex = 4;
+            buttonCreateCheck.Text = "📄 Создать чек";
+            buttonCreateCheck.UseVisualStyleBackColor = true;
+            buttonCreateCheck.BackColor = Color.LightBlue;
+            buttonCreateCheck.Click += buttonCreateCheck_Click;
+            //
             // tableLayoutPanelWrapper
-            // 
+            //
             tableLayoutPanelWrapper.ColumnCount = 1;
             tableLayoutPanelWrapper.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelWrapper.Controls.Add(flowLayoutPanelFormControl, 0, 1);
@@ -117,17 +152,21 @@
             tableLayoutPanelWrapper.RowStyles.Add(new RowStyle());
             tableLayoutPanelWrapper.Size = new Size(784, 511);
             tableLayoutPanelWrapper.TabIndex = 2;
-            // 
+            //
             // flowLayoutPanelFormControl
-            // 
+            //
             flowLayoutPanelFormControl.AutoSize = true;
             flowLayoutPanelFormControl.Controls.Add(buttonCancel);
             flowLayoutPanelFormControl.Controls.Add(buttonAccept);
+            flowLayoutPanelFormControl.Controls.Add(buttonCancelOrder);
+            flowLayoutPanelFormControl.Controls.Add(buttonStartExecution);
+            flowLayoutPanelFormControl.Controls.Add(buttonCreateCheck);
             flowLayoutPanelFormControl.Dock = DockStyle.Fill;
             flowLayoutPanelFormControl.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanelFormControl.Location = new Point(3, 479);
+            flowLayoutPanelFormControl.MinimumSize = new Size(778, 35);
             flowLayoutPanelFormControl.Name = "flowLayoutPanelFormControl";
-            flowLayoutPanelFormControl.Size = new Size(778, 29);
+            flowLayoutPanelFormControl.Size = new Size(778, 35);
             flowLayoutPanelFormControl.TabIndex = 0;
             // 
             // tabControl
@@ -164,18 +203,16 @@
             tableLayoutPanelMain.Controls.Add(labelCar, 0, 2);
             tableLayoutPanelMain.Controls.Add(labelMaster, 0, 3);
             tableLayoutPanelMain.Controls.Add(labelServiceDateTime, 0, 4);
-            tableLayoutPanelMain.Controls.Add(labelStatus, 0, 5);
             tableLayoutPanelMain.Controls.Add(textBoxOrderNumber, 1, 0);
             tableLayoutPanelMain.Controls.Add(tableLayoutPanelClient, 1, 1);
             tableLayoutPanelMain.Controls.Add(tableLayoutPanelCar, 1, 2);
             tableLayoutPanelMain.Controls.Add(comboBoxMaster, 1, 3);
-            tableLayoutPanelMain.Controls.Add(dateTimePickerServiceDateTime, 1, 4);
-            tableLayoutPanelMain.Controls.Add(comboBoxStatus, 1, 5);
+            tableLayoutPanelMain.Controls.Add(dateTimePickerServiceDate, 1, 4);
+            tableLayoutPanelMain.Controls.Add(dateTimePickerServiceTime, 1, 5);
             tableLayoutPanelMain.Dock = DockStyle.Fill;
             tableLayoutPanelMain.Location = new Point(3, 3);
             tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-            tableLayoutPanelMain.RowCount = 7;
-            tableLayoutPanelMain.RowStyles.Add(new RowStyle());
+            tableLayoutPanelMain.RowCount = 6;
             tableLayoutPanelMain.RowStyles.Add(new RowStyle());
             tableLayoutPanelMain.RowStyles.Add(new RowStyle());
             tableLayoutPanelMain.RowStyles.Add(new RowStyle());
@@ -234,19 +271,9 @@
             labelServiceDateTime.Size = new Size(120, 15);
             labelServiceDateTime.TabIndex = 4;
             labelServiceDateTime.Text = "Дата и время услуги";
-            // 
-            // labelStatus
-            // 
-            labelStatus.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            labelStatus.AutoSize = true;
-            labelStatus.Location = new Point(3, 152);
-            labelStatus.Name = "labelStatus";
-            labelStatus.Size = new Size(120, 15);
-            labelStatus.TabIndex = 5;
-            labelStatus.Text = "Статус";
-            // 
+            //
             // textBoxOrderNumber
-            // 
+            //
             textBoxOrderNumber.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             textBoxOrderNumber.Location = new Point(129, 3);
             textBoxOrderNumber.Name = "textBoxOrderNumber";
@@ -285,37 +312,37 @@
             comboBoxMaster.Size = new Size(632, 23);
             comboBoxMaster.TabIndex = 9;
             //
-            // dateTimePickerServiceDateTime
+            // dateTimePickerServiceDate
             //
-            dateTimePickerServiceDateTime.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            dateTimePickerServiceDateTime.Format = DateTimePickerFormat.Short;
-            dateTimePickerServiceDateTime.Location = new Point(129, 119);
-            dateTimePickerServiceDateTime.Name = "dateTimePickerServiceDateTime";
-            dateTimePickerServiceDateTime.Size = new Size(546, 23);
-            dateTimePickerServiceDateTime.TabIndex = 10;
-            dateTimePickerServiceDateTime.ValueChanged += dateTimePickerServiceDateTime_ValueChanged;
+            dateTimePickerServiceDate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            dateTimePickerServiceDate.Format = DateTimePickerFormat.Short;
+            dateTimePickerServiceDate.Location = new Point(129, 119);
+            dateTimePickerServiceDate.Name = "dateTimePickerServiceDate";
+            dateTimePickerServiceDate.Size = new Size(270, 23);
+            dateTimePickerServiceDate.TabIndex = 10;
+            dateTimePickerServiceDate.ValueChanged += dateTimePickerServiceDate_ValueChanged;
+            //
+            // dateTimePickerServiceTime
+            //
+            dateTimePickerServiceTime.Anchor = AnchorStyles.Left;
+            dateTimePickerServiceTime.Format = DateTimePickerFormat.Time;
+            dateTimePickerServiceTime.CustomFormat = "HH:mm";
+            dateTimePickerServiceTime.Location = new Point(405, 119);
+            dateTimePickerServiceTime.Name = "dateTimePickerServiceTime";
+            dateTimePickerServiceTime.Size = new Size(150, 23);
+            dateTimePickerServiceTime.TabIndex = 11;
+            dateTimePickerServiceTime.ValueChanged += dateTimePickerServiceTime_ValueChanged;
             //
             // buttonShowSchedule
             //
             buttonShowSchedule.Anchor = AnchorStyles.Left;
-            buttonShowSchedule.Location = new Point(681, 120);
+            buttonShowSchedule.Location = new Point(561, 120);
             buttonShowSchedule.Name = "buttonShowSchedule";
-            buttonShowSchedule.Size = new Size(80, 23);
-            buttonShowSchedule.TabIndex = 11;
+            buttonShowSchedule.Size = new Size(100, 23);
+            buttonShowSchedule.TabIndex = 12;
             buttonShowSchedule.Text = "Расписание";
             buttonShowSchedule.UseVisualStyleBackColor = true;
             buttonShowSchedule.Click += buttonShowSchedule_Click;
-            //
-            // comboBoxStatus
-            //
-            comboBoxStatus.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            comboBoxStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxStatus.FormattingEnabled = true;
-            comboBoxStatus.Items.AddRange(new object[] { "Ожидает", "В работе", "Выполнена", "Просрочена", "Отменена" });
-            comboBoxStatus.Location = new Point(129, 148);
-            comboBoxStatus.Name = "comboBoxStatus";
-            comboBoxStatus.Size = new Size(632, 23);
-            comboBoxStatus.TabIndex = 11;
             //
             // tableLayoutPanelClient
             //
@@ -630,6 +657,9 @@
 
         private Button buttonAccept;
         private Button buttonCancel;
+        private Button buttonCancelOrder;
+        private Button buttonStartExecution;
+        private Button buttonCreateCheck;
         private TableLayoutPanel tableLayoutPanelWrapper;
         private FlowLayoutPanel flowLayoutPanelFormControl;
         private TabControl tabControl;
@@ -640,14 +670,13 @@
         private Label labelCar;
         private Label labelMaster;
         private Label labelServiceDateTime;
-        private Label labelStatus;
         private TextBox textBoxOrderNumber;
         private ComboBox comboBoxClient;
         private ComboBox comboBoxCar;
         private ComboBox comboBoxMaster;
-        private DateTimePicker dateTimePickerServiceDateTime;
+        private DateTimePicker dateTimePickerServiceDate;
+        private DateTimePicker dateTimePickerServiceTime;
         private Button buttonShowSchedule;
-        private ComboBox comboBoxStatus;
         private TableLayoutPanel tableLayoutPanelClient;
         private Button buttonAddClient;
         private TableLayoutPanel tableLayoutPanelCar;

@@ -1,6 +1,7 @@
 ﻿using Data;
 using Data.Models;
 using Data.Repositories;
+using Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace View
@@ -15,6 +16,7 @@ namespace View
         private readonly CarRepository _carRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly PartRepository _partRepository;
+        private readonly MasterAvailabilityService _availabilityService;
 
         private List<Client> _allClients = new();
         private List<Car> _allCars = new();
@@ -37,6 +39,7 @@ namespace View
             _carRepository = new CarRepository(_dbContext);
             _serviceRepository = new ServiceRepository(_dbContext);
             _partRepository = new PartRepository(_dbContext);
+            _availabilityService = new MasterAvailabilityService(_dbContext);
 
             InitializeDataGridViews();
         }
@@ -73,8 +76,6 @@ namespace View
             comboBoxClient.ValueMember = "Id";
             comboBoxClient.SelectedIndex = -1;
 
-            comboBoxStatus.SelectedIndex = 0; // По умолчанию "Ожидает"
-
             // Загружаем мастеров
             var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
             comboBoxMaster.DataSource = masters;
@@ -98,7 +99,9 @@ namespace View
             else
             {
                 Text = "Создание заявки";
-                dateTimePickerServiceDateTime.Value = DateTime.Now.AddHours(1);
+                // Устанавливаем текущую дату и время + 1 час
+                dateTimePickerServiceDate.Value = DateTime.Today;
+                dateTimePickerServiceTime.Value = DateTime.Now.AddHours(1);
             }
         }
 
@@ -126,26 +129,17 @@ namespace View
             if (order != null)
             {
                 comboBoxClient.SelectedValue = order.ClientId;
-                await LoadCarsForClient(order.ClientId);
+                LoadCarsForClient(order.ClientId);
                 comboBoxCar.SelectedValue = order.CarId;
-                
+
                 if (order.MasterId.HasValue)
                 {
                     comboBoxMaster.SelectedValue = order.MasterId.Value;
                 }
-                
-                dateTimePickerServiceDateTime.Value = order.ServiceDateTime;
-                
-                var statusIndex = order.Status switch
-                {
-                    OrderStatus.Pending => 0,
-                    OrderStatus.InProgress => 1,
-                    OrderStatus.Completed => 2,
-                    OrderStatus.Overdue => 3,
-                    OrderStatus.Cancelled => 4,
-                    _ => 0
-                };
-                comboBoxStatus.SelectedIndex = statusIndex;
+
+                // Устанавливаем дату и время
+                dateTimePickerServiceDate.Value = order.ServiceDateTime.Date;
+                dateTimePickerServiceTime.Value = order.ServiceDateTime;
 
                 _selectedServices = order.OrderServices.ToList();
                 _selectedParts = order.OrderParts.ToList();
@@ -156,19 +150,19 @@ namespace View
             }
         }
 
-        private async Task LoadCarsForClient(int clientId)
+        private void LoadCarsForClient(int clientId)
         {
-            // Получаем автомобили клиента через OwnerId
-            var clientCars = await _dbContext.Cars
+            // Получаем автомобили клиента через OwnerId (синхронно, чтобы избежать конфликтов)
+            var clientCars = _dbContext.Cars
                 .Where(c => c.OwnerId == clientId)
-                .ToListAsync();
-            
-            var bindingList = clientCars.Select(c => new 
-            { 
-                c.Id, 
-                BrandModel = $"{c.Brand} {c.Model} {c.StateMark}" 
+                .ToList();
+
+            var bindingList = clientCars.Select(c => new
+            {
+                c.Id,
+                BrandModel = $"{c.Brand} {c.Model} {c.StateMark}"
             }).ToList();
-            
+
             comboBoxCar.DataSource = bindingList;
             comboBoxCar.DisplayMember = "BrandModel";
             comboBoxCar.ValueMember = "Id";
@@ -178,13 +172,19 @@ namespace View
         private void comboBoxClient_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Проверяем, что выбрано корректное значение (int, а не объект Client)
-            if (comboBoxClient.SelectedValue is int clientId && clientId > 0)
+            // Игнорируем событие во время инициализации
+            if (comboBoxClient.SelectedValue is int clientId && clientId > 0 && comboBoxClient.DataSource != null)
             {
-                _ = LoadCarsForClient(clientId);
+                LoadCarsForClient(clientId);
             }
         }
 
-        private void dateTimePickerServiceDateTime_ValueChanged(object sender, EventArgs e)
+        private void dateTimePickerServiceDate_ValueChanged(object sender, EventArgs e)
+        {
+            // Можно добавить проверку доступности мастера
+        }
+
+        private void dateTimePickerServiceTime_ValueChanged(object sender, EventArgs e)
         {
             // Можно добавить проверку доступности мастера
         }
@@ -192,7 +192,7 @@ namespace View
         private async void buttonShowSchedule_Click(object sender, EventArgs e)
         {
             // Получаем выбранную дату
-            var selectedDate = dateTimePickerServiceDateTime.Value.Date;
+            var selectedDate = dateTimePickerServiceDate.Value.Date;
 
             // Загружаем активных мастеров
             var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
@@ -212,7 +212,7 @@ namespace View
                 {
                     // Устанавливаем выбранного мастера и время
                     comboBoxMaster.SelectedValue = scheduleForm.SelectedMaster.Id;
-                    dateTimePickerServiceDateTime.Value = scheduleForm.SelectedDateTime.Value;
+                    dateTimePickerServiceTime.Value = scheduleForm.SelectedDateTime.Value;
                 }
             }
         }
@@ -388,19 +388,33 @@ namespace View
 
             try
             {
-                var status = comboBoxStatus.SelectedIndex switch
-                {
-                    0 => OrderStatus.Pending,
-                    1 => OrderStatus.InProgress,
-                    2 => OrderStatus.Completed,
-                    3 => OrderStatus.Overdue,
-                    4 => OrderStatus.Cancelled,
-                    _ => OrderStatus.Pending
-                };
-
                 var masterId = Convert.ToInt32(comboBoxMaster.SelectedValue);
+
+                // Объединяем дату и время
+                var serviceDate = dateTimePickerServiceDate.Value.Date;
+                var serviceTime = dateTimePickerServiceTime.Value.TimeOfDay;
+                var serviceDateTime = serviceDate + serviceTime;
+
                 // Явно указываем DateTimeKind.Utc для корректной работы с PostgreSQL
-                var serviceDateTime = DateTime.SpecifyKind(dateTimePickerServiceDateTime.Value, DateTimeKind.Utc);
+                serviceDateTime = DateTime.SpecifyKind(serviceDateTime, DateTimeKind.Utc);
+
+                // Проверяем доступность мастера
+                var totalDuration = _selectedServices.Sum(s => s.Service.DurationMinutes);
+                var isAvailable = await _availabilityService.IsMasterAvailableAtAsync(
+                    masterId, serviceDateTime, totalDuration);
+
+                if (!isAvailable)
+                {
+                    MessageBox.Show(
+                        $"Мастер занят в это время!\n\n" +
+                        $"Выбранное время: {dateTimePickerServiceDate.Value:dd.MM.yyyy} {dateTimePickerServiceTime.Value:HH:mm}\n" +
+                        $"Длительность услуг: {totalDuration} мин.\n\n" +
+                        $"Пожалуйста, выберите другое время или мастера.",
+                        "Мастер занят",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
 
                 if (OrderId.HasValue)
                 {
@@ -412,7 +426,7 @@ namespace View
                         order.CarId = Convert.ToInt32(comboBoxCar.SelectedValue);
                         order.MasterId = masterId;
                         order.ServiceDateTime = serviceDateTime;
-                        order.Status = status;
+                        order.Status = OrderStatus.Pending; // По умолчанию "Ожидает"
 
                         // Обновляем услуги и запчасти
                         _dbContext.OrderServices.RemoveRange(order.OrderServices);
@@ -434,8 +448,11 @@ namespace View
                                           _selectedParts.Sum(p => p.Price * p.Quantity);
 
                         await _dbContext.SaveChangesAsync();
-                        MessageBox.Show("Заявка обновлена", "Успешно", 
+                        MessageBox.Show("Заявка обновлена", "Успешно",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        DialogResult = DialogResult.OK;
+                        Close();
                     }
                 }
                 else
@@ -448,9 +465,9 @@ namespace View
                         CarId = Convert.ToInt32(comboBoxCar.SelectedValue),
                         MasterId = masterId,
                         ServiceDateTime = serviceDateTime,
-                        Status = status,
+                        Status = OrderStatus.Pending, // По умолчанию "Ожидает"
                         ManagerId = CurrentUser.User?.Id ?? 1,
-                        TotalPrice = _selectedServices.Sum(s => s.Price * s.Quantity) + 
+                        TotalPrice = _selectedServices.Sum(s => s.Price * s.Quantity) +
                                     _selectedParts.Sum(p => p.Price * p.Quantity)
                     };
 
@@ -536,13 +553,143 @@ namespace View
             if (formCar.ShowDialog() == DialogResult.OK)
             {
                 // Обновляем список автомобилей
-                await LoadCarsForClient(clientId);
-                
+                LoadCarsForClient(clientId);
+
                 // Выбираем newly созданный автомобиль
                 if (formCar.CarId.HasValue)
                 {
                     comboBoxCar.SelectedValue = formCar.CarId.Value;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Отмена заявки
+        /// </summary>
+        private async void buttonCancelOrder_Click(object sender, EventArgs e)
+        {
+            if (!OrderId.HasValue)
+            {
+                MessageBox.Show("Сначала сохраните заявку", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                "Вы действительно хотите отменить заявку?\n\nЭто действие нельзя отменить.",
+                "Отмена заявки",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    var order = await _orderRepository.GetByIdAsync(OrderId.Value);
+                    if (order != null)
+                    {
+                        order.Status = OrderStatus.Cancelled;
+                        order.UpdatedAt = DateTime.UtcNow;
+                        await _dbContext.SaveChangesAsync();
+
+                        MessageBox.Show("Заявка отменена", "Успешно",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        DialogResult = DialogResult.OK;
+                        Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                // Пользователь отменил - не закрываем форму
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Начать выполнение заявки
+        /// </summary>
+        private async void buttonStartExecution_Click(object sender, EventArgs e)
+        {
+            if (!OrderId.HasValue)
+            {
+                MessageBox.Show("Сначала сохраните заявку", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                var order = await _orderRepository.GetByIdAsync(OrderId.Value);
+                if (order != null)
+                {
+                    if (order.Status == OrderStatus.Cancelled)
+                    {
+                        MessageBox.Show("Нельзя начать выполнение отменённой заявки", "Внимание",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (order.Status == OrderStatus.Completed)
+                    {
+                        MessageBox.Show("Заявка уже выполнена", "Внимание",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    order.Status = OrderStatus.InProgress;
+                    order.UpdatedAt = DateTime.UtcNow;
+                    await _dbContext.SaveChangesAsync();
+
+                    MessageBox.Show("Заявка переведена в статус \"В работе\"", "Успешно",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Создать чек из заявки
+        /// </summary>
+        private void buttonCreateCheck_Click(object sender, EventArgs e)
+        {
+            if (!OrderId.HasValue)
+            {
+                MessageBox.Show("Сначала сохраните заявку", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Открываем форму создания чека с текущей заявкой
+                var formCheck = new FormCheck(OrderId.Value);
+                if (formCheck.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Чек создан. Заявка переведена в статус \"Выполнена\"", "Успешно",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

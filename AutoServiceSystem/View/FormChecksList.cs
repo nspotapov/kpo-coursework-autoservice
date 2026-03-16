@@ -48,6 +48,9 @@ namespace View
             dataGridViewChecks.Columns["MasterName"].Width = 120;
             dataGridViewChecks.Columns["ManagerName"].Width = 120;
             dataGridViewChecks.Columns["CreatedAt"].Width = 120;
+            
+            // Добавляем обработчик двойного клика
+            dataGridViewChecks.CellDoubleClick += DataGridViewChecks_CellDoubleClick;
         }
 
         private async void FormChecksList_Load(object sender, EventArgs e)
@@ -194,6 +197,191 @@ namespace View
                 MessageBox.Show("Выберите чек для удаления", "Внимание",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        /// <summary>
+        /// Открытие HTML-чека по двойному клику
+        /// </summary>
+        private async void DataGridViewChecks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                var checkId = Convert.ToInt32(dataGridViewChecks.SelectedRows[0].Cells["Id"].Value);
+                await OpenCheckInBrowserAsync(checkId);
+            }
+        }
+
+        /// <summary>
+        /// Открытие чека в браузере
+        /// </summary>
+        private async Task OpenCheckInBrowserAsync(int checkId)
+        {
+            try
+            {
+                var check = await _checkRepository.GetByIdAsync(checkId);
+                if (check == null)
+                {
+                    MessageBox.Show("Чек не найден", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var htmlContent = GenerateHtmlCheck(check);
+                var tempFile = Path.Combine(Path.GetTempPath(), $"check_{check.CheckNumber}.html");
+                await File.WriteAllTextAsync(tempFile, htmlContent, System.Text.Encoding.UTF8);
+
+                // Открываем в браузере по умолчанию
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = tempFile,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при открытии чека: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Генерация HTML-чека
+        /// </summary>
+        private string GenerateHtmlCheck(Check check)
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine(@"<!DOCTYPE html>
+<html lang='ru'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Чек № " + check.CheckNumber + @"</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #333; }
+        .info { margin-bottom: 20px; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .info-label { font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .total { text-align: right; font-size: 18px; font-weight: bold; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+        h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class='header'>
+        <h1>ИС Автосервис</h1>
+        <p>Чек выполнения работ № " + check.CheckNumber + @"</p>
+        <p>Дата: " + check.CreatedAt.ToString("dd.MM.yyyy HH:mm") + @"</p>
+    </div>
+
+    <div class='info'>
+        <div class='info-row'>
+            <span class='info-label'>Клиент:</span>
+            <span>" + check.ClientName + @"</span>
+        </div>
+        <div class='info-row'>
+            <span class='info-label'>Автомобиль:</span>
+            <span>" + check.CarInfo + @"</span>
+        </div>
+        <div class='info-row'>
+            <span class='info-label'>Мастер:</span>
+            <span>" + (check.MasterName ?? "Не назначен") + @"</span>
+        </div>
+        <div class='info-row'>
+            <span class='info-label'>Менеджер:</span>
+            <span>" + check.ManagerName + @"</span>
+        </div>
+    </div>
+
+    <h2>Услуги</h2>
+    <table>
+        <tr>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+        </tr>");
+
+            // Получаем услуги из заказа
+            var order = _dbContext.Orders
+                .Include(o => o.OrderServices)
+                .ThenInclude(os => os.Service)
+                .Include(o => o.OrderParts)
+                .ThenInclude(op => op.Part)
+                .FirstOrDefault(o => o.Id == check.OrderId);
+
+            if (order != null)
+            {
+                foreach (var os in order.OrderServices)
+                {
+                    sb.AppendLine($@"        <tr>
+            <td>{os.Service.Name}</td>
+            <td>{os.Quantity}</td>
+            <td>{os.Price:C0}</td>
+            <td>{os.Price * os.Quantity:C0}</td>
+        </tr>");
+                }
+            }
+
+            sb.AppendLine($@"        <tr>
+            <td colspan='3' style='text-align: right;'><b>Итого за услуги:</b></td>
+            <td>{check.ServicesTotal:C0}</td>
+        </tr>
+    </table>
+
+    <h2>Запчасти</h2>
+    <table>
+        <tr>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+        </tr>");
+
+            // Получаем запчасти из заказа
+            if (order != null && order.OrderParts.Any())
+            {
+                foreach (var op in order.OrderParts)
+                {
+                    sb.AppendLine($@"        <tr>
+            <td>{op.Part.Name}</td>
+            <td>{op.Quantity}</td>
+            <td>{op.Price:C0}</td>
+            <td>{op.Price * op.Quantity:C0}</td>
+        </tr>");
+                }
+
+                sb.AppendLine($@"        <tr>
+            <td colspan='3' style='text-align: right;'><b>Итого за запчасти:</b></td>
+            <td>{check.PartsTotal:C0}</td>
+        </tr>
+    </table>");
+            }
+            else
+            {
+                sb.AppendLine(@"        <tr>
+            <td colspan='4' style='text-align: center;'>Запчасти не использовались</td>
+        </tr>
+    </table>");
+            }
+
+            sb.AppendLine($@"
+    <div class='total'>
+        <p>Общая сумма: {check.TotalAmount:C0}</p>
+    </div>
+
+    <div class='footer'>
+        <p>Спасибо за обращение в ИС Автосервис!</p>
+        <p>Чек сгенерирован автоматически</p>
+    </div>
+</body>
+</html>");
+
+            return sb.ToString();
         }
     }
 }

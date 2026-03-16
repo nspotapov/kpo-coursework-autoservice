@@ -1,12 +1,10 @@
-﻿namespace Settings
+namespace Data
 {
     /// <summary>
     /// Глобальные константы приложения
     /// </summary>
-    public static class GlobalConstants
+    public static class AppConstants
     {
-        public readonly static string AppName = "ИС Автосервис";
-        
         /// <summary>
         /// Время начала рабочего дня
         /// </summary>

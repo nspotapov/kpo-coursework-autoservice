@@ -2,15 +2,8 @@ namespace View
 {
     partial class FormMasterSchedule
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,12 +13,6 @@ namespace View
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             buttonSelect = new Button();
@@ -35,7 +22,7 @@ namespace View
             tableLayoutPanelMain = new TableLayoutPanel();
             labelSelectedDate = new Label();
             dataGridViewSchedule = new DataGridView();
-            labelBusyDetails = new Label();
+            labelInfo = new Label();
             tableLayoutPanelWrapper.SuspendLayout();
             flowLayoutPanelFormControl.SuspendLayout();
             tableLayoutPanelMain.SuspendLayout();
@@ -46,15 +33,15 @@ namespace View
             // 
             buttonSelect.Location = new Point(520, 3);
             buttonSelect.Name = "buttonSelect";
-            buttonSelect.Size = new Size(100, 23);
+            buttonSelect.Size = new Size(120, 23);
             buttonSelect.TabIndex = 1;
-            buttonSelect.Text = "Выбрать";
+            buttonSelect.Text = "Выбрать слот";
             buttonSelect.UseVisualStyleBackColor = true;
             buttonSelect.Click += buttonSelect_Click;
             // 
             // buttonCancel
             // 
-            buttonCancel.Location = new Point(626, 3);
+            buttonCancel.Location = new Point(646, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(75, 23);
             buttonCancel.TabIndex = 0;
@@ -74,7 +61,7 @@ namespace View
             tableLayoutPanelWrapper.RowCount = 2;
             tableLayoutPanelWrapper.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelWrapper.RowStyles.Add(new RowStyle());
-            tableLayoutPanelWrapper.Size = new Size(800, 550);
+            tableLayoutPanelWrapper.Size = new Size(800, 650);
             tableLayoutPanelWrapper.TabIndex = 0;
             // 
             // flowLayoutPanelFormControl
@@ -84,7 +71,7 @@ namespace View
             flowLayoutPanelFormControl.Controls.Add(buttonSelect);
             flowLayoutPanelFormControl.Dock = DockStyle.Fill;
             flowLayoutPanelFormControl.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanelFormControl.Location = new Point(3, 518);
+            flowLayoutPanelFormControl.Location = new Point(3, 618);
             flowLayoutPanelFormControl.Name = "flowLayoutPanelFormControl";
             flowLayoutPanelFormControl.Size = new Size(794, 29);
             flowLayoutPanelFormControl.TabIndex = 0;
@@ -95,7 +82,7 @@ namespace View
             tableLayoutPanelMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelMain.Controls.Add(labelSelectedDate, 0, 0);
             tableLayoutPanelMain.Controls.Add(dataGridViewSchedule, 0, 1);
-            tableLayoutPanelMain.Controls.Add(labelBusyDetails, 0, 2);
+            tableLayoutPanelMain.Controls.Add(labelInfo, 0, 2);
             tableLayoutPanelMain.Dock = DockStyle.Fill;
             tableLayoutPanelMain.Location = new Point(3, 3);
             tableLayoutPanelMain.Name = "tableLayoutPanelMain";
@@ -103,7 +90,7 @@ namespace View
             tableLayoutPanelMain.RowStyles.Add(new RowStyle());
             tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelMain.RowStyles.Add(new RowStyle());
-            tableLayoutPanelMain.Size = new Size(794, 509);
+            tableLayoutPanelMain.Size = new Size(794, 609);
             tableLayoutPanelMain.TabIndex = 1;
             // 
             // labelSelectedDate
@@ -130,19 +117,20 @@ namespace View
             dataGridViewSchedule.RowHeadersVisible = false;
             dataGridViewSchedule.RowTemplate.Height = 25;
             dataGridViewSchedule.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dataGridViewSchedule.Size = new Size(788, 429);
+            dataGridViewSchedule.Size = new Size(788, 529);
             dataGridViewSchedule.TabIndex = 1;
             dataGridViewSchedule.CellClick += dataGridViewSchedule_CellClick;
+            dataGridViewSchedule.CellDoubleClick += dataGridViewSchedule_CellDoubleClick;
             // 
-            // labelBusyDetails
+            // labelInfo
             // 
-            labelBusyDetails.AutoSize = true;
-            labelBusyDetails.Dock = DockStyle.Fill;
-            labelBusyDetails.Location = new Point(3, 459);
-            labelBusyDetails.Name = "labelBusyDetails";
-            labelBusyDetails.Size = new Size(788, 50);
-            labelBusyDetails.TabIndex = 2;
-            labelBusyDetails.Text = "Занятые слоты:";
+            labelInfo.AutoSize = true;
+            labelInfo.Dock = DockStyle.Fill;
+            labelInfo.Location = new Point(3, 559);
+            labelInfo.Name = "labelInfo";
+            labelInfo.Size = new Size(788, 50);
+            labelInfo.TabIndex = 2;
+            labelInfo.Text = "✓ - Свободно (зелёный) | ✗ - Занято (красный) | Обед (оранжевый)\r\nДважды кликните на зелёную ячейку для выбора";
             // 
             // FormMasterSchedule
             // 
@@ -150,12 +138,13 @@ namespace View
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = buttonCancel;
-            ClientSize = new Size(800, 550);
+            ClientSize = new Size(800, 650);
             Controls.Add(tableLayoutPanelWrapper);
-            MinimumSize = new Size(800, 550);
+            MinimumSize = new Size(800, 650);
             Name = "FormMasterSchedule";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Расписание мастеров";
+            Load += FormMasterSchedule_Load;
             tableLayoutPanelWrapper.ResumeLayout(false);
             tableLayoutPanelWrapper.PerformLayout();
             flowLayoutPanelFormControl.ResumeLayout(false);
@@ -165,8 +154,6 @@ namespace View
             ResumeLayout(false);
         }
 
-        #endregion
-
         private Button buttonSelect;
         private Button buttonCancel;
         private TableLayoutPanel tableLayoutPanelWrapper;
@@ -174,6 +161,6 @@ namespace View
         private TableLayoutPanel tableLayoutPanelMain;
         private Label labelSelectedDate;
         private DataGridView dataGridViewSchedule;
-        private Label labelBusyDetails;
+        private Label labelInfo;
     }
 }

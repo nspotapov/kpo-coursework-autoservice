@@ -234,6 +234,8 @@
             dataGridViewOrders.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewOrders.Size = new Size(1273, 493);
             dataGridViewOrders.TabIndex = 2;
+            dataGridViewOrders.CellDoubleClick += dataGridViewOrders_CellDoubleClick;
+            dataGridViewOrders.KeyDown += dataGridViewOrders_KeyDown;
             // 
             // ColumnOrderId
             // 
@@ -486,6 +488,8 @@
             dataGridViewCars.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewCars.Size = new Size(1273, 493);
             dataGridViewCars.TabIndex = 0;
+            dataGridViewCars.CellDoubleClick += dataGridViewCars_CellDoubleClick;
+            dataGridViewCars.KeyDown += dataGridViewCars_KeyDown;
             // 
             // ColumnCarId
             // 
@@ -574,6 +578,8 @@
             dataGridViewClients.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewClients.Size = new Size(1273, 493);
             dataGridViewClients.TabIndex = 0;
+            dataGridViewClients.CellDoubleClick += dataGridViewClients_CellDoubleClick;
+            dataGridViewClients.KeyDown += dataGridViewClients_KeyDown;
             // 
             // ColumnClientId
             // 
