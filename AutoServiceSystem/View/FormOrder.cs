@@ -191,8 +191,24 @@ namespace View
 
         private async void buttonShowSchedule_Click(object sender, EventArgs e)
         {
+            // Проверяем, что выбрана хотя бы одна услуга
+            if (_selectedServices.Count == 0)
+            {
+                MessageBox.Show(
+                    "Сначала добавьте хотя бы одну услугу.\n\n" +
+                    "Это необходимо для расчёта длительности и проверки доступности мастеров.",
+                    "Услуги не выбраны",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                tabControl.SelectedIndex = 1; // Переключаем на вкладку услуг
+                return;
+            }
+
             // Получаем выбранную дату (конвертируем в UTC)
             var selectedDate = DateTime.SpecifyKind(dateTimePickerServiceDate.Value.Date, DateTimeKind.Utc);
+
+            // Рассчитываем общую длительность услуг
+            var totalDuration = _selectedServices.Sum(s => s.Service.DurationMinutes);
 
             // Загружаем активных мастеров
             var masters = await _dbContext.Masters.Where(m => m.IsActive).ToListAsync();
@@ -204,8 +220,8 @@ namespace View
                 return;
             }
 
-            // Показываем форму расписания
-            var scheduleForm = new FormMasterSchedule(masters, selectedDate);
+            // Показываем форму расписания с длительностью услуг
+            var scheduleForm = new FormMasterSchedule(masters, selectedDate, totalDuration);
             if (scheduleForm.ShowDialog() == DialogResult.OK)
             {
                 if (scheduleForm.SelectedMaster != null && scheduleForm.SelectedDateTime.HasValue)

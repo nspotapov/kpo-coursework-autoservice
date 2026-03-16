@@ -9,19 +9,21 @@ namespace View
     {
         private readonly List<Master> _masters;
         private readonly DateTime _selectedDate;
+        private readonly int _serviceDurationMinutes; // Длительность услуг в минутах
         private readonly AutoserviceDbContext _dbContext;
         private readonly MasterAvailabilityService _availabilityService;
 
         public DateTime? SelectedDateTime { get; private set; }
         public Master? SelectedMaster { get; private set; }
 
-        public FormMasterSchedule(List<Master> masters, DateTime selectedDate)
+        public FormMasterSchedule(List<Master> masters, DateTime selectedDate, int serviceDurationMinutes = 30)
         {
             InitializeComponent();
 
             _masters = masters;
             // Конвертируем дату в UTC для корректной работы с PostgreSQL
             _selectedDate = DateTime.SpecifyKind(selectedDate.Date, DateTimeKind.Utc);
+            _serviceDurationMinutes = serviceDurationMinutes;
 
             var optionsBuilder = new DbContextOptionsBuilder<AutoserviceDbContext>()
                 .UseNpgsql(Settings.DBConfig.ConnectionString)
@@ -31,6 +33,8 @@ namespace View
             _availabilityService = new MasterAvailabilityService(_dbContext);
 
             labelSelectedDate.Text = $"Расписание на {_selectedDate:dd.MM.yyyy}";
+            labelInfo.Text = $"✓ - Свободно (зелёный) | ✗ - Занято (красный) | Обед (оранжевый)\r\n" +
+                            $"Длительность услуг: {serviceDurationMinutes} мин. | Дважды кликните на зелёную ячейку для выбора";
             
             InitializeDataGridView();
             LoadMasterSchedule();
@@ -78,9 +82,9 @@ namespace View
                 for (int i = 0; i < _masters.Count; i++)
                 {
                     var master = _masters[i];
-                    // Проверяем слот 30 минут
+                    // Проверяем, поместится ли услуга длительностью _serviceDurationMinutes
                     var isAvailable = await _availabilityService.IsMasterAvailableAtAsync(
-                        master.Id, currentTime, 30);
+                        master.Id, currentTime, _serviceDurationMinutes);
 
                     var cell = row.Cells[i + 1];
 
@@ -94,7 +98,7 @@ namespace View
                     }
                     else if (isAvailable)
                     {
-                        // Свободен
+                        // Свободен - услуга поместится
                         cell.Value = "✓";
                         cell.Style.BackColor = Color.LightGreen;
                         cell.Style.ForeColor = Color.DarkGreen;
@@ -102,7 +106,7 @@ namespace View
                     }
                     else
                     {
-                        // Занят
+                        // Занят - услуга не поместится
                         cell.Value = "✗";
                         cell.Style.BackColor = Color.LightCoral;
                         cell.Style.ForeColor = Color.DarkRed;
