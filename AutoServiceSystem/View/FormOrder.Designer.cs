@@ -45,6 +45,8 @@
             labelServiceDateTime = new Label();
             labelServiceDate = new Label();
             labelServiceTime = new Label();
+            labelEnterTime = new Label();
+            labelOrViewSchedule = new Label();
             textBoxOrderNumber = new TextBox();
             comboBoxClient = new ComboBox();
             comboBoxCar = new ComboBox();
@@ -296,6 +298,26 @@
             labelServiceTime.Size = new Size(120, 15);
             labelServiceTime.TabIndex = 14;
             labelServiceTime.Text = "Время начала *";
+            //
+            // labelEnterTime
+            //
+            labelEnterTime.Anchor = AnchorStyles.Left;
+            labelEnterTime.AutoSize = true;
+            labelEnterTime.Location = new Point(285, 126);
+            labelEnterTime.Name = "labelEnterTime";
+            labelEnterTime.Size = new Size(114, 15);
+            labelEnterTime.TabIndex = 16;
+            labelEnterTime.Text = "— ввести вручную";
+            //
+            // labelOrViewSchedule
+            //
+            labelOrViewSchedule.Anchor = AnchorStyles.Left;
+            labelOrViewSchedule.AutoSize = true;
+            labelOrViewSchedule.Location = new Point(564, 97);
+            labelOrViewSchedule.Name = "labelOrViewSchedule";
+            labelOrViewSchedule.Size = new Size(158, 15);
+            labelOrViewSchedule.TabIndex = 17;
+            labelOrViewSchedule.Text = "или выбрать из расписания:";
             //
             // textBoxOrderNumber
             //
@@ -657,6 +679,7 @@
             Name = "FormOrder";
             Text = "Заявка";
             Load += FormOrder_Load;
+            FormClosing += FormOrder_FormClosing;
             tableLayoutPanelWrapper.ResumeLayout(false);
             tableLayoutPanelWrapper.PerformLayout();
             flowLayoutPanelFormControl.ResumeLayout(false);
@@ -697,6 +720,8 @@
         private Label labelServiceDateTime;
         private Label labelServiceDate;
         private Label labelServiceTime;
+        private Label labelEnterTime;
+        private Label labelOrViewSchedule;
         private TextBox textBoxOrderNumber;
         private ComboBox comboBoxClient;
         private ComboBox comboBoxCar;

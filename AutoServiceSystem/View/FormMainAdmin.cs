@@ -214,9 +214,15 @@ namespace View
                 }
 
                 var dialogResult = form.ShowDialog();
+                
+                // Отладка: выводим результат диалога
+                System.Diagnostics.Debug.WriteLine($"FormOrder закрыта с DialogResult={dialogResult}, OrderId={form.OrderId}");
+                
                 if (dialogResult == DialogResult.OK)
                 {
+                    System.Diagnostics.Debug.WriteLine("Обновляем список заявок...");
                     await LoadOrdersAsync();
+                    System.Diagnostics.Debug.WriteLine("Список заявок обновлён");
                 }
             }
             else if (tabControl.SelectedTab == tabPageCars)
@@ -567,8 +573,15 @@ namespace View
         {
             try
             {
-                var orders = await _orderRepository.GetAllAsync();
-                
+                // Используем AsNoTracking() для получения свежих данных из БД
+                var orders = await _dbContext.Orders
+                    .AsNoTracking()
+                    .Include(o => o.Master)
+                    .Include(o => o.Car)
+                    .Include(o => o.Client)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToListAsync();
+
                 dataGridViewOrders.Rows.Clear();
                 foreach (var order in orders)
                 {

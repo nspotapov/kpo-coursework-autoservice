@@ -580,8 +580,26 @@ namespace View
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            // При редактировании всегда возвращаем OK, чтобы обновить список
+            // При создании возвращаем Cancel
+            if (OrderId.HasValue)
+            {
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                DialogResult = DialogResult.Cancel;
+            }
             Close();
+        }
+
+        private void FormOrder_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Если форма закрывается через X (крестик), устанавливаем DialogResult
+            if (OrderId.HasValue && DialogResult != DialogResult.OK)
+            {
+                DialogResult = DialogResult.OK;
+            }
         }
 
         private async void buttonAddClient_Click(object sender, EventArgs e)
