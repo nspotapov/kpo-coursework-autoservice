@@ -164,11 +164,71 @@ public class OrderRepository
             .Include(o => o.Manager)
             .Where(o => o.OrderNumber.Contains(searchTerm) ||
                        o.Client.LastName.Contains(searchTerm) ||
+                       o.Client.FirstName.Contains(searchTerm) ||
                        o.Car.Brand.Contains(searchTerm) ||
                        o.Car.Model.Contains(searchTerm) ||
-                       (o.Master != null && o.Master.LastName.Contains(searchTerm)))
+                       (o.Master != null && o.Master.LastName.Contains(searchTerm)) ||
+                       (o.Master != null && o.Master.FirstName.Contains(searchTerm)))
             .OrderByDescending(o => o.ServiceDateTime)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Фильтрация заявок по нескольким параметрам
+    /// </summary>
+    public async Task<List<Order>> FilterAsync(
+        string? searchTerm = null,
+        DateTime? dateFrom = null,
+        DateTime? dateTo = null,
+        OrderStatus? status = null,
+        int? masterId = null)
+    {
+        var query = _context.Orders
+            .Include(o => o.Client)
+            .Include(o => o.Car)
+            .Include(o => o.Master)
+            .Include(o => o.Manager)
+            .AsQueryable();
+
+        // Поиск по текстовому полю
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(o =>
+                o.OrderNumber.Contains(searchTerm) ||
+                o.Client.LastName.Contains(searchTerm) ||
+                o.Client.FirstName.Contains(searchTerm) ||
+                o.Car.Brand.Contains(searchTerm) ||
+                o.Car.Model.Contains(searchTerm) ||
+                (o.Master != null && o.Master.LastName.Contains(searchTerm)) ||
+                (o.Master != null && o.Master.FirstName.Contains(searchTerm)));
+        }
+
+        // Фильтр по дате от
+        if (dateFrom.HasValue)
+        {
+            query = query.Where(o => o.ServiceDateTime >= dateFrom.Value);
+        }
+
+        // Фильтр по дате до (включительно до конца дня)
+        if (dateTo.HasValue)
+        {
+            var dateToEnd = dateTo.Value.Date.AddDays(1); // До конца дня
+            query = query.Where(o => o.ServiceDateTime < dateToEnd);
+        }
+
+        // Фильтр по статусу
+        if (status.HasValue)
+        {
+            query = query.Where(o => o.Status == status.Value);
+        }
+
+        // Фильтр по мастеру
+        if (masterId.HasValue)
+        {
+            query = query.Where(o => o.MasterId == masterId.Value);
+        }
+
+        return await query.OrderByDescending(o => o.ServiceDateTime).ToListAsync();
     }
 
     /// <summary>

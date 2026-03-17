@@ -93,11 +93,48 @@ public class ClientRepository
             return await GetAllAsync();
 
         return await _context.Clients
-            .Where(c => c.IsActive && 
-                (c.LastName.Contains(searchTerm) || 
+            .Where(c => c.IsActive &&
+                (c.LastName.Contains(searchTerm) ||
                  c.FirstName.Contains(searchTerm) ||
-                 c.Phone.Contains(searchTerm)))
+                 (c.MiddleName != null && c.MiddleName.Contains(searchTerm)) ||
+                 c.Phone.Contains(searchTerm) ||
+                 (c.Email != null && c.Email.Contains(searchTerm)) ||
+                 (c.Address != null && c.Address.Contains(searchTerm)) ||
+                 (c.Inn != null && c.Inn.Contains(searchTerm))))
             .OrderBy(c => c.LastName)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Фильтрация клиентов по поиску и типу
+    /// </summary>
+    public async Task<List<Client>> FilterAsync(
+        string? searchTerm = null,
+        ClientType? type = null)
+    {
+        var query = _context.Clients
+            .Where(c => c.IsActive)
+            .AsQueryable();
+
+        // Поиск по текстовому полю
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(c =>
+                c.LastName.Contains(searchTerm) ||
+                c.FirstName.Contains(searchTerm) ||
+                (c.MiddleName != null && c.MiddleName.Contains(searchTerm)) ||
+                c.Phone.Contains(searchTerm) ||
+                (c.Email != null && c.Email.Contains(searchTerm)) ||
+                (c.Address != null && c.Address.Contains(searchTerm)) ||
+                (c.Inn != null && c.Inn.Contains(searchTerm)));
+        }
+
+        // Фильтр по типу клиента
+        if (type.HasValue)
+        {
+            query = query.Where(c => c.Type == type.Value);
+        }
+
+        return await query.OrderBy(c => c.LastName).ToListAsync();
     }
 }

@@ -52,7 +52,7 @@ namespace View
                 {
                     CurrentUser.Login(user);
                     DialogResult = DialogResult.OK;
-                    Hide(); // Скрываем форму авторизации вместо Close()
+                    Close(); // Закрываем форму авторизации
                 }
                 else
                 {

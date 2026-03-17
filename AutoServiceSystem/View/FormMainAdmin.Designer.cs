@@ -350,38 +350,40 @@
             tableLayoutPanelOrdersFilter.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelOrdersFilter.Size = new Size(1273, 29);
             tableLayoutPanelOrdersFilter.TabIndex = 3;
-            // 
+            //
             // textBoxOrderFilterSearch
-            // 
+            //
             textBoxOrderFilterSearch.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             textBoxOrderFilterSearch.Location = new Point(3, 3);
             textBoxOrderFilterSearch.Name = "textBoxOrderFilterSearch";
             textBoxOrderFilterSearch.PlaceholderText = "Поиск";
             textBoxOrderFilterSearch.Size = new Size(290, 23);
             textBoxOrderFilterSearch.TabIndex = 1;
-            // 
+            textBoxOrderFilterSearch.TextChanged += TextBoxSearch_TextChanged;
+            textBoxOrderFilterSearch.KeyDown += TextBoxSearch_KeyDown;
+            //
             // dateTimePickerOrderFilterDateFrom
-            // 
+            //
             dateTimePickerOrderFilterDateFrom.CustomFormat = "dd MMMM yyyy г.";
             dateTimePickerOrderFilterDateFrom.Format = DateTimePickerFormat.Custom;
             dateTimePickerOrderFilterDateFrom.Location = new Point(299, 3);
             dateTimePickerOrderFilterDateFrom.Name = "dateTimePickerOrderFilterDateFrom";
             dateTimePickerOrderFilterDateFrom.Size = new Size(145, 23);
             dateTimePickerOrderFilterDateFrom.TabIndex = 0;
-            dateTimePickerOrderFilterDateFrom.ValueChanged += dateTimePickerOrderFilterDateFrom_ValueChanged;
-            // 
+            dateTimePickerOrderFilterDateFrom.ValueChanged += dateTimePickerOrderFilter_ValueChanged;
+            //
             // dateTimePickerOrderFilterDateTo
-            // 
+            //
             dateTimePickerOrderFilterDateTo.CustomFormat = "dd MMMM yyyy г.";
             dateTimePickerOrderFilterDateTo.Format = DateTimePickerFormat.Custom;
             dateTimePickerOrderFilterDateTo.Location = new Point(450, 3);
             dateTimePickerOrderFilterDateTo.Name = "dateTimePickerOrderFilterDateTo";
             dateTimePickerOrderFilterDateTo.Size = new Size(143, 23);
             dateTimePickerOrderFilterDateTo.TabIndex = 5;
-            dateTimePickerOrderFilterDateTo.ValueChanged += dateTimePickerOrderFilterDateTo_ValueChanged;
-            // 
+            dateTimePickerOrderFilterDateTo.ValueChanged += dateTimePickerOrderFilter_ValueChanged;
+            //
             // comboBoxOrderFilterStatus
-            // 
+            //
             comboBoxOrderFilterStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxOrderFilterStatus.FormattingEnabled = true;
             comboBoxOrderFilterStatus.Items.AddRange(new object[] { "Все статусы" });
@@ -389,17 +391,17 @@
             comboBoxOrderFilterStatus.Name = "comboBoxOrderFilterStatus";
             comboBoxOrderFilterStatus.Size = new Size(252, 23);
             comboBoxOrderFilterStatus.TabIndex = 4;
-            comboBoxOrderFilterStatus.SelectedIndexChanged += comboBoxOrderFilterStatus_SelectedIndexChanged;
-            // 
+            comboBoxOrderFilterStatus.SelectedIndexChanged += comboBoxOrderFilter_SelectedIndexChanged;
+            //
             // comboBoxOrderFilterWorker
-            // 
+            //
             comboBoxOrderFilterWorker.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxOrderFilterWorker.Items.AddRange(new object[] { "Все мастера" });
             comboBoxOrderFilterWorker.Location = new Point(857, 3);
             comboBoxOrderFilterWorker.Name = "comboBoxOrderFilterWorker";
             comboBoxOrderFilterWorker.Size = new Size(343, 23);
             comboBoxOrderFilterWorker.TabIndex = 6;
-            comboBoxOrderFilterWorker.SelectedIndexChanged += comboBoxOrderFilterWorker_SelectedIndexChanged;
+            comboBoxOrderFilterWorker.SelectedIndexChanged += comboBoxOrderFilter_SelectedIndexChanged;
             // 
             // buttonOrdersFiltersSearchSubmit
             // 
@@ -452,15 +454,17 @@
             tableLayoutPanelCarsFilter.RowStyles.Add(new RowStyle());
             tableLayoutPanelCarsFilter.Size = new Size(1273, 29);
             tableLayoutPanelCarsFilter.TabIndex = 2;
-            // 
+            //
             // textBoxCarsFilterSearch
-            // 
+            //
             textBoxCarsFilterSearch.Dock = DockStyle.Fill;
             textBoxCarsFilterSearch.Location = new Point(3, 3);
             textBoxCarsFilterSearch.Name = "textBoxCarsFilterSearch";
             textBoxCarsFilterSearch.PlaceholderText = "Поиск";
             textBoxCarsFilterSearch.Size = new Size(1197, 23);
             textBoxCarsFilterSearch.TabIndex = 1;
+            textBoxCarsFilterSearch.TextChanged += TextBoxSearch_TextChanged;
+            textBoxCarsFilterSearch.KeyDown += TextBoxSearch_KeyDown;
             // 
             // buttonCarsFiltersSearchSubmit
             // 
@@ -619,16 +623,18 @@
             tableLayoutPanelClientsFilter.TabIndex = 1;
             // 
             // textBoxClientsFilterSearch
-            // 
+            //
             textBoxClientsFilterSearch.Dock = DockStyle.Fill;
             textBoxClientsFilterSearch.Location = new Point(3, 3);
             textBoxClientsFilterSearch.Name = "textBoxClientsFilterSearch";
             textBoxClientsFilterSearch.PlaceholderText = "Поиск";
             textBoxClientsFilterSearch.Size = new Size(955, 23);
             textBoxClientsFilterSearch.TabIndex = 1;
-            // 
+            textBoxClientsFilterSearch.TextChanged += TextBoxSearch_TextChanged;
+            textBoxClientsFilterSearch.KeyDown += TextBoxSearch_KeyDown;
+            //
             // comboBoxClientsTypeFilter
-            // 
+            //
             comboBoxClientsTypeFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxClientsTypeFilter.FormattingEnabled = true;
             comboBoxClientsTypeFilter.Items.AddRange(new object[] { "Все типы", "Физические лица", "Юридические лица" });
@@ -637,9 +643,9 @@
             comboBoxClientsTypeFilter.Size = new Size(236, 23);
             comboBoxClientsTypeFilter.TabIndex = 0;
             comboBoxClientsTypeFilter.SelectedIndexChanged += comboBoxClientsTypeFilter_SelectedIndexChanged;
-            // 
+            //
             // buttonClientsFiltersSearchSubmit
-            // 
+            //
             buttonClientsFiltersSearchSubmit.Dock = DockStyle.Fill;
             buttonClientsFiltersSearchSubmit.Location = new Point(1206, 3);
             buttonClientsFiltersSearchSubmit.Name = "buttonClientsFiltersSearchSubmit";

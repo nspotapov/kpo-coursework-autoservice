@@ -94,12 +94,38 @@ public class CarRepository
 
         return await _context.Cars
             .Include(c => c.Owner)
-            .Where(c => c.Brand.Contains(searchTerm) || 
+            .Where(c => c.Brand.Contains(searchTerm) ||
                        c.Model.Contains(searchTerm) ||
                        (c.StateMark != null && c.StateMark.Contains(searchTerm)) ||
-                       (c.VinNumber != null && c.VinNumber.Contains(searchTerm)))
+                       (c.VinNumber != null && c.VinNumber.Contains(searchTerm)) ||
+                       (c.Color != null && c.Color.Contains(searchTerm)) ||
+                       (c.ProductionYear.HasValue && c.ProductionYear.Value.ToString().Contains(searchTerm)))
             .OrderByDescending(c => c.CreatedAt)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Фильтрация автомобилей по поиску
+    /// </summary>
+    public async Task<List<Car>> FilterAsync(string? searchTerm = null)
+    {
+        var query = _context.Cars
+            .Include(c => c.Owner)
+            .AsQueryable();
+
+        // Поиск по текстовому полю
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(c =>
+                c.Brand.Contains(searchTerm) ||
+                c.Model.Contains(searchTerm) ||
+                (c.StateMark != null && c.StateMark.Contains(searchTerm)) ||
+                (c.VinNumber != null && c.VinNumber.Contains(searchTerm)) ||
+                (c.Color != null && c.Color.Contains(searchTerm)) ||
+                (c.ProductionYear.HasValue && c.ProductionYear.Value.ToString().Contains(searchTerm)));
+        }
+
+        return await query.OrderByDescending(c => c.CreatedAt).ToListAsync();
     }
 
     /// <summary>
