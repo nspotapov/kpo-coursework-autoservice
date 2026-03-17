@@ -78,7 +78,8 @@ namespace View
                 ReferencePartsToolStripMenuItem.Visible = true;
                 MastersToolStripMenuItem.Visible = true;
                 ChecksToolStripMenuItem.Visible = true;
-                
+                ReportsToolStripMenuItem.Visible = true;
+
                 // Вкладки: только просмотр (CRUD отключены)
                 SetCrudButtonsEnabled(tabPageOrders, false);
                 SetCrudButtonsEnabled(tabPageClients, false);
@@ -91,7 +92,8 @@ namespace View
                 ReferenceServicesToolStripMenuItem.Visible = false;
                 ReferencePartsToolStripMenuItem.Visible = false;
                 MastersToolStripMenuItem.Visible = false;
-                
+                ReportsToolStripMenuItem.Visible = false;
+
                 // Вкладки менеджера: CRUD активны
                 SetCrudButtonsEnabled(tabPageOrders, true);
                 SetCrudButtonsEnabled(tabPageClients, true);
@@ -543,6 +545,21 @@ namespace View
             // Открыть окна управления чеками
             var form = new FormChecksList();
             form.ShowDialog();
+        }
+
+        private void ReportsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Открыть форму отчётов (доступно только администраторам)
+            if (CurrentUser.IsAdmin)
+            {
+                var form = new FormReports();
+                form.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Отчёты доступны только администраторам", "Доступ запрещён",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void LogoutToolStripMenuItem_Click(object sender, EventArgs e)

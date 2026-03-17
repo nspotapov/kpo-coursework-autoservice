@@ -41,6 +41,7 @@
             ReferencePartsToolStripMenuItem = new ToolStripMenuItem();
             MastersToolStripMenuItem = new ToolStripMenuItem();
             ChecksToolStripMenuItem = new ToolStripMenuItem();
+            ReportsToolStripMenuItem = new ToolStripMenuItem();
             ItemToolStripMenuItem = new ToolStripMenuItem();
             CreateItemToolStripMenuItem = new ToolStripMenuItem();
             EditItemToolStripMenuItem = new ToolStripMenuItem();
@@ -120,7 +121,7 @@
             //
             // menuStrip
             //
-            menuStrip.Items.AddRange(new ToolStripItem[] { InfoToolStripMenuItem, SystemToolStripMenuItem, ReferenceToolStripMenuItem, ChecksToolStripMenuItem, ItemToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { InfoToolStripMenuItem, SystemToolStripMenuItem, ReferenceToolStripMenuItem, ChecksToolStripMenuItem, ReportsToolStripMenuItem, ItemToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1293, 24);
@@ -196,6 +197,13 @@
             ChecksToolStripMenuItem.Size = new Size(56, 20);
             ChecksToolStripMenuItem.Text = "Чеки";
             ChecksToolStripMenuItem.Click += ChecksToolStripMenuItem_Click;
+            //
+            // ReportsToolStripMenuItem
+            //
+            ReportsToolStripMenuItem.Name = "ReportsToolStripMenuItem";
+            ReportsToolStripMenuItem.Size = new Size(64, 20);
+            ReportsToolStripMenuItem.Text = "Отчёты";
+            ReportsToolStripMenuItem.Click += ReportsToolStripMenuItem_Click;
             //
             // ItemToolStripMenuItem
             // 
@@ -752,6 +760,7 @@
         private ToolStripMenuItem ReferencePartsToolStripMenuItem;
         private ToolStripMenuItem MastersToolStripMenuItem;
         private ToolStripMenuItem ChecksToolStripMenuItem;
+        private ToolStripMenuItem ReportsToolStripMenuItem;
         private ToolStripMenuItem LogoutToolStripMenuItem;
     }
 }
